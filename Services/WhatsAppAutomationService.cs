@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace AcentemOto.Services
 {
@@ -27,12 +28,12 @@ namespace AcentemOto.Services
             KillZombieChromeDrivers();
         }
 
-        public void InitializeDriver(bool isHeadless = false)
+        public void InitializeDriver(bool isHeadless = false, string profileName = "DefaultProfile")
         {
             var options = new ChromeOptions();
 
-            // User Data directory -> AppData\Roaming\AcentemOto\ChromeProfile
-            string userDataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AcentemOto", "ChromeProfile");
+            // User Data directory -> AppData\Roaming\AcentemOto\ChromeProfiles\{profileName}
+            string userDataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AcentemOto", "ChromeProfiles", profileName);
             options.AddArgument($"user-data-dir={userDataDir}");
 
             // Anti-detect arguments
@@ -55,7 +56,7 @@ namespace AcentemOto.Services
             _driver.Navigate().GoToUrl("https://web.whatsapp.com/");
         }
 
-        public async Task SendMessageAsync(List<MessageLog> messageLogs, string messageText, IProgress<string> progress, CancellationToken cancellationToken)
+        public async Task SendMessageAsync(List<MessageLog> messageLogs, string messageTemplate, string? attachmentPath, IProgress<string> progress, CancellationToken cancellationToken)
         {
             int successCount = 0;
 
@@ -76,9 +77,17 @@ namespace AcentemOto.Services
                 {
                     progress.Report($"İşleniyor: {log.PhoneNumber}");
 
+                    // 1. Prepare paramatric message: replace {Header} with value
+                    string finalMessageText = messageTemplate;
+                    foreach (var param in log.Parameters)
+                    {
+                        finalMessageText = Regex.Replace(finalMessageText, Regex.Escape($"{{{param.Key}}}"), param.Value ?? "", RegexOptions.IgnoreCase);
+                    }
+
                     // URL encoded message and phone number
-                    string encodedMessage = Uri.EscapeDataString(messageText);
-                    string url = $"https://web.whatsapp.com/send?phone={log.PhoneNumber.TrimStart('+')}&text={encodedMessage}";
+                    // Metni kopyalamak bazen başarısız olursa diye URL'e de ekliyoruz (yedek olarak).
+                    string encodedMessage = Uri.EscapeDataString(finalMessageText);
+                    string url = $"https://web.whatsapp.com/send?phone={log.PhoneNumber}&text={encodedMessage}";
 
                     if (_driver == null) throw new InvalidOperationException("Tarayıcı başlatılmamış.");
 
@@ -100,34 +109,117 @@ namespace AcentemOto.Services
 
                     // Sohbetin tam olarak yüklenmesi ve mesaj kutusunun hazır olması için bekle
                     await Task.Delay(3000, cancellationToken);
-
-                    bool messageSent = false;
-                    var sendButtons = _driver.FindElements(By.CssSelector("span[data-icon='send'], button[aria-label='Gönder'], button[aria-label='Send']"));
-                    foreach (var btn in sendButtons)
+                    
+                    // --- METİN GÖNDERİMİ ---
+                    var txtBoxes = _driver.FindElements(By.CssSelector("div[aria-placeholder='Bir mesaj yazın'], div[title='Bir mesaj yazın'], div[title='Type a message'], div[contenteditable='true'][data-tab='10'], div[contenteditable='true'][data-tab='6']"));
+                    if (txtBoxes.Count > 0)
                     {
-                        try
+                        // URL üzerinden metin zaten kutuya dolmuş olabilir. Eğer boşsa clipboard ile yapıştır.
+                        if (string.IsNullOrWhiteSpace(txtBoxes[0].Text))
                         {
-                            btn.Click();
-                            messageSent = true;
-                            break;
+                            try
+                            {
+                                // Javascript kullanarak div'e yapıştırmak daha güvenlidir
+                                ((IJavaScriptExecutor)_driver).ExecuteScript(
+                                    "const text = arguments[0];" +
+                                    "const dataTransfer = new DataTransfer();" +
+                                    "dataTransfer.setData('text', text);" +
+                                    "const event = new ClipboardEvent('paste', { clipboardData: dataTransfer, bubbles: true });" +
+                                    "arguments[1].dispatchEvent(event);",
+                                    finalMessageText, txtBoxes[0]);
+                                    
+                                await Task.Delay(500, cancellationToken);
+                            }
+                            catch { /* Ignore paste error, URL text might be there */ }
                         }
-                        catch { }
+                        txtBoxes[0].SendKeys(OpenQA.Selenium.Keys.Enter);
+                    }
+                    else
+                    {
+                         throw new WebDriverTimeoutException("Mesaj gönderme butonu veya alanları bulunamadı.");
+                    }
+                    
+                    await Task.Delay(1000, cancellationToken);
+
+                    // --- DOSYA/GÖRSEL EKLENTİ GÖNDERİMİ ---
+                    if (!string.IsNullOrWhiteSpace(attachmentPath) && File.Exists(attachmentPath))
+                    {
+                        await Task.Delay(1000, cancellationToken); // Metin gönderildikten sonra kısa bekleme
+                        
+                        try 
+                        {
+                            // 1. Eklenti (Artı / Ataş) butonuna tıkla ki input DOM'a yüklensin
+                            var attachButtons = _driver.FindElements(By.CssSelector("div[title='Ekle'], span[data-icon='plus'], span[data-icon='clip']"));
+                            if (attachButtons.Count > 0)
+                            {
+                                attachButtons[0].Click();
+                                await Task.Delay(1000, cancellationToken); // Menünün açılmasını bekle
+                            }
+
+                            // 2. Gizli input[type='file'] elemanlarını bul
+                            var fileInputs = _driver.FindElements(By.CssSelector("input[type='file']"));
+                            if (fileInputs.Count > 0)
+                            {
+                                // Resimler/Videolar için olan genellikle 2. inputtur, ancak hepsini denemek mantıklı
+                                // Eklenen hata çözümü: WhatsApp son güncellemesinde "Sticker" yükleme butonu da eklediği için "image" içeren iki input var.
+                                // Resim/Video input'u her zaman "video/mp4" içerir, Sticker input'u içermez.
+                                
+                                // Yeni WhatsApp Web yapısında "accept" parametresi gizlenmeye başlandı veya etiketler değiştirildi. 
+                                // Ancak input sıraları sabittir: 
+                                // [0] -> Document (Belge)
+                                // [1] -> Image/Video (GaleriMedya)
+                                // [2] -> Sticker
+                                
+                                bool isImageOrVideo = attachmentPath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || 
+                                                      attachmentPath.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) || 
+                                                      attachmentPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) || 
+                                                      attachmentPath.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) ||
+                                                      attachmentPath.EndsWith(".3gp", StringComparison.OrdinalIgnoreCase);
+
+                                IWebElement? targetInput = null;
+
+                                if (isImageOrVideo && fileInputs.Count >= 2)
+                                {
+                                    // Resim/Video ise kesinlikle 2. inputu (Index 1) kullan (Galeri)
+                                    targetInput = fileInputs[1];
+                                }
+                                else if (!isImageOrVideo && fileInputs.Count >= 1)
+                                {
+                                    // Belge ise 1. inputu (Index 0) kullan (Document)
+                                    targetInput = fileInputs[0];
+                                }
+                                else if (fileInputs.Count > 0)
+                                {
+                                    // Fallback
+                                    targetInput = fileInputs[0];
+                                }
+
+                                if (targetInput != null)
+                                {
+                                    targetInput.SendKeys(attachmentPath);
+                                }
+
+                                // 3. Ön izleme ekranındaki Gönder butonunu bekle ve tıkla
+                                WebDriverWait waitAttach = new WebDriverWait(_driver, TimeSpan.FromSeconds(15));
+                                var attachSendBtn = waitAttach.Until(driver => {
+                                    var btns = driver.FindElements(By.CssSelector("div[aria-label='Gönder'], span[data-icon='send'], div[role='button'] span[data-icon='send']"));
+                                    foreach(var b in btns) {
+                                        if (b.Displayed) return b;
+                                    }
+                                    return null;
+                                });
+                                attachSendBtn.Click();
+                                
+                                await Task.Delay(3000, cancellationToken); // Dosya animasyonunun tamamlanması için ek süre
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            progress.Report($"Uyarı: Görsel/Dosya gönderilemedi ({ex.Message})");
+                        }
                     }
 
-                    if (!messageSent)
-                    {
-                        var msgBoxes = _driver.FindElements(By.CssSelector("div[aria-placeholder='Bir mesaj yazın'], div[title='Bir mesaj yazın'], div[title='Type a message'], div[contenteditable='true'][data-tab='10']"));
-                        if (msgBoxes.Count > 0)
-                        {
-                            msgBoxes[0].SendKeys(OpenQA.Selenium.Keys.Enter);
-                        }
-                        else
-                        {
-                            throw new WebDriverTimeoutException("Mesaj gönderme butonu veya alanları bulunamadı.");
-                        }
-                    }
-
-                    // Mesajın gerçekten iletilmesi ve animasyonunun tamamlanması için ek bekleme (ÇOK ÖNEMLİ: URL hemen değişirse mesaj gitmez)
+                    // Animasyon ve ağ gecikmesi için bekle
                     await Task.Delay(4000, cancellationToken);
 
                     log.Status = MessageStatus.Sent;
@@ -175,22 +267,31 @@ namespace AcentemOto.Services
             {
                 try
                 {
-                    // Message box: div[aria-placeholder='Bir mesaj yazın'] or div[title='Bir mesaj yazın']
-                    // Invalid popup: div[data-animate-modal-popup="true"] -> "Telefon numarası URL üzerinden paylaşıldı ancak geçersiz."
-                    
+                    bool isInvalid = false;
                     var element = wait.Until(driver => {
-                        var msgBox = driver.FindElements(By.CssSelector("div[aria-placeholder='Bir mesaj yazın'], div[title='Bir mesaj yazın'], div[title='Type a message'], div[contenteditable='true'][data-tab='10']"));
+                        // 1. Sohbet kutusunu kontrol et
+                        var msgBox = driver.FindElements(By.CssSelector("div[aria-placeholder='Bir mesaj yazın'], div[title='Bir mesaj yazın'], div[title='Type a message'], div[contenteditable='true'][data-tab='10'], div[contenteditable='true'][data-tab='6']"));
                         if (msgBox.Count > 0 && msgBox[0].Displayed) return msgBox[0];
                         
-                        var errorPopup = driver.FindElements(By.CssSelector("div[data-animate-modal-popup='true'] button"));
-                        if (errorPopup.Count > 0 && errorPopup[0].Displayed) return errorPopup[0];
+                        // 2. Hata popup'ını kontrol et ("Telefon numarası paylaşılan url üzerinden..." veya "geçersiz")
+                        var popups = driver.FindElements(By.CssSelector("div[data-animate-modal-popup='true']"));
+                        if (popups.Count > 0 && popups[0].Displayed)
+                        {
+                            string popupText = popups[0].Text.ToLower();
+                            if (popupText.Contains("geçersiz") || popupText.Contains("invalid") || popupText.Contains("url"))
+                            {
+                                isInvalid = true;
+                                var btn = popups[0].FindElement(By.CssSelector("button"));
+                                return btn;
+                            }
+                        }
                         
                         return null;
                     });
                     
-                    // If it's a popup (button), it's invalid number
-                    if (element.TagName.ToLower() == "button" || element.GetAttribute("data-animate-modal-popup") != null)
+                    if (isInvalid)
                     {
+                        try { element.Click(); } catch { } // 'Tamam' butonuna basıp popup'ı kapat
                         return false;
                     }
                     

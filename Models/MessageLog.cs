@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AcentemOto.Models
 {
@@ -17,5 +19,8 @@ namespace AcentemOto.Models
         public string? ErrorMessage { get; set; }
         public DateTime? SentAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [NotMapped]
+        public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
     }
 }

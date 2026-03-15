@@ -9,25 +9,31 @@ namespace AcentemOto.Extensions
             if (string.IsNullOrWhiteSpace(phoneNumber))
                 return string.Empty;
 
-            // Rakam olmayan tüm karakterleri temizle
+            // Sadece rakamları al
             string cleanNumber = Regex.Replace(phoneNumber, @"[^\d]", "");
 
-            if (cleanNumber.StartsWith("90") && cleanNumber.Length >= 12)
+            // Türkiye için (90) başı kontrolü
+            if (cleanNumber.StartsWith("90"))
             {
-                return "+" + cleanNumber;
+                // Uzunluk doğrulama (örn: 905551234567 -> 12 hane)
+                if (cleanNumber.Length == 12) return cleanNumber;
+                return cleanNumber; // Olduğu gibi bırak
             }
 
-            if (cleanNumber.StartsWith("0"))
+            // Başında 0 varsa at (örn: 05551234567 -> 5551234567)
+            if (cleanNumber.StartsWith("0") && cleanNumber.Length == 11)
             {
-                cleanNumber = cleanNumber.Substring(1);
+                return "90" + cleanNumber.Substring(1);
             }
 
+            // Sadece alan kodu ve numara varsa (örn: 5551234567 -> 10 hane)
             if (cleanNumber.Length == 10)
             {
-                return "+90" + cleanNumber;
+                return "90" + cleanNumber;
             }
 
-            return "+" + cleanNumber;
+            // Bilinmeyen format, olduğu gibi döndür
+            return cleanNumber;
         }
     }
 }
