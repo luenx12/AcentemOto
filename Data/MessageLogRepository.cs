@@ -17,6 +17,15 @@ namespace AcentemOto.Data
             }
         }
 
+        public async Task AddLogsBulkAsync(IEnumerable<MessageLog> logs)
+        {
+            using (var context = new AppDbContext())
+            {
+                await context.MessageLogs.AddRangeAsync(logs);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task UpdateLogAsync(MessageLog log)
         {
             using (var context = new AppDbContext())

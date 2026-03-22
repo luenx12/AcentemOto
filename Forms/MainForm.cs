@@ -57,6 +57,12 @@ namespace AcentemOto.Forms
                 Primary.Red500, Accent.Red200, TextShade.WHITE
             );
 
+            // Veritabanının ilk açılışta oluşturulmasını sağla
+            using (var context = new AppDbContext())
+            {
+                context.Database.EnsureCreated();
+            }
+
             UpdateDashboard();
         }
 
@@ -118,13 +124,19 @@ namespace AcentemOto.Forms
                         
                         var loadedLogs = await _excelService.ReadPhoneNumbersAsync(ofd.FileName);
                         
+                        var newLogs = new List<MessageLog>();
                         foreach (var log in loadedLogs)
                         {
                             if (!_messageLogs.Any(x => x.PhoneNumber == log.PhoneNumber))
                             {
-                                await _repository.AddLogAsync(log);
+                                newLogs.Add(log);
                                 _messageLogs.Add(log);
                             }
+                        }
+
+                        if (newLogs.Any())
+                        {
+                            await _repository.AddLogsBulkAsync(newLogs);
                         }
 
                         dgvNumbers.Refresh();
@@ -656,9 +668,26 @@ namespace AcentemOto.Forms
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            _cancellationTokenSource?.Cancel();
-            _catCancellationTokenSource?.Cancel();
-            _whatsAppService?.Dispose();
+            try
+            {
+                if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
+                {
+                    _cancellationTokenSource.Cancel();
+                    _cancellationTokenSource.Dispose();
+                }
+
+                if (_catCancellationTokenSource != null && !_catCancellationTokenSource.IsCancellationRequested)
+                {
+                    _catCancellationTokenSource.Cancel();
+                    _catCancellationTokenSource.Dispose();
+                }
+
+                _whatsAppService?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Kapanırken hata oluştu: {ex.Message}");
+            }
         }
     }
 }

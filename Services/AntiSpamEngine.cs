@@ -3,15 +3,32 @@ using System.Threading.Tasks;
 
 namespace AcentemOto.Services
 {
+    public enum GonderimHizi { Hizli, Orta, Yavas }
+
     public class AntiSpamEngine
     {
         private readonly Random _random = new Random();
         private const int MESSAGES_BEFORE_COOLDOWN = 20;
+        
+        public GonderimHizi SeciliHiz { get; set; } = GonderimHizi.Orta;
 
         public async Task WaitBetweenMessagesAsync()
         {
-            // 12 ile 28 saniye arası rastgele bekleme
-            int delaySeconds = _random.Next(12, 29);
+            int delaySeconds;
+            switch(SeciliHiz)
+            {
+                case GonderimHizi.Hizli:
+                    delaySeconds = _random.Next(5, 11);
+                    break;
+                case GonderimHizi.Yavas:
+                    delaySeconds = _random.Next(25, 41);
+                    break;
+                case GonderimHizi.Orta:
+                default:
+                    // 12 ile 28 saniye arası rastgele bekleme
+                    delaySeconds = _random.Next(12, 29);
+                    break;
+            }
             await Task.Delay(TimeSpan.FromSeconds(delaySeconds));
         }
 

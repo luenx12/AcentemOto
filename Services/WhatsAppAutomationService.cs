@@ -56,7 +56,7 @@ namespace AcentemOto.Services
             _driver.Navigate().GoToUrl("https://web.whatsapp.com/");
         }
 
-        public async Task SendMessageAsync(List<MessageLog> messageLogs, string messageTemplate, string? attachmentPath, IProgress<string> progress, CancellationToken cancellationToken)
+        public async Task SendMessageAsync(List<MessageLog> messageLogs, string messageTemplate, string? attachmentPath, IProgress<string> progress, CancellationToken cancellationToken, bool useUniqueHash = false)
         {
             int successCount = 0;
 
@@ -84,6 +84,14 @@ namespace AcentemOto.Services
                         finalMessageText = Regex.Replace(finalMessageText, Regex.Escape($"{{{param.Key}}}"), param.Value ?? "", RegexOptions.IgnoreCase);
                     }
 
+                    // Mesaj Benzersizleştirme (Hash Buster)
+                    if (useUniqueHash)
+                    {
+                        string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                        string hash = new string(Enumerable.Repeat(chars, 6).Select(s => s[new Random().Next(s.Length)]).ToArray());
+                        finalMessageText += $"\n[Ref: {hash}]";
+                    }
+
                     // URL encoded message and phone number
                     // Metni kopyalamak bazen başarısız olursa diye URL'e de ekliyoruz (yedek olarak).
                     string encodedMessage = Uri.EscapeDataString(finalMessageText);
@@ -91,7 +99,13 @@ namespace AcentemOto.Services
 
                     if (_driver == null) throw new InvalidOperationException("Tarayıcı başlatılmamış.");
 
-                    _driver.Navigate().GoToUrl(url);
+                    // SPA Navigasyon (Sayfa Yenilenmesini Engelleme)
+                    ((IJavaScriptExecutor)_driver).ExecuteScript(
+                        "const a = document.createElement('a');" +
+                        "a.href = arguments[0];" +
+                        "document.body.appendChild(a);" +
+                        "a.click();" +
+                        "document.body.removeChild(a);", url);
 
                     WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(30));
 
@@ -132,6 +146,10 @@ namespace AcentemOto.Services
                             }
                             catch { /* Ignore paste error, URL text might be there */ }
                         }
+
+                        // İnsan Simülasyonu (Humanize)
+                        await Task.Delay(new Random().Next(1000, 3001), cancellationToken);
+
                         txtBoxes[0].SendKeys(OpenQA.Selenium.Keys.Enter);
                     }
                     else
@@ -228,6 +246,14 @@ namespace AcentemOto.Services
 
                     successCount++;
                     progress.Report($"Başarılı: {log.PhoneNumber}");
+
+                    // 50 başarılı mesajda bir Garbage Collection
+                    if (successCount % 50 == 0)
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers(); // Bellek temizliğini bekle
+                        progress.Report("Sistem belleği temizlendi (Garbage Collection).");
+                    }
 
                     // Anti-spam mola
                     progress.Report("Anti-spam beklemesi devrede...");

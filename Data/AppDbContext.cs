@@ -11,14 +11,13 @@ namespace AcentemOto.Data
 
         public AppDbContext()
         {
-            Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Veritabanını uygulamanın çalıştığı klasörde oluşturur
             string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "messages.db");
-            optionsBuilder.UseSqlite($"Data Source={dbPath}");
+            optionsBuilder.UseSqlite($"Data Source={dbPath};Cache=Shared;Mode=ReadWriteCreate;Journal Mode=WAL;Default Timeout=5;");
         }
     }
 }

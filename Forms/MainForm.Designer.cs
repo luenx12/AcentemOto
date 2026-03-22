@@ -127,6 +127,7 @@ namespace AcentemOto.Forms
             this.tabGönderim.Controls.Add(this.dtpSchedule);
             this.tabGönderim.Controls.Add(this.btnAttachment);
             this.tabGönderim.Controls.Add(this.lblAttachment);
+            this.tabGönderim.Controls.Add(this.btnRemoveAttachment);
             this.tabGönderim.Controls.Add(this.label1);
             this.tabGönderim.Controls.Add(this.txtMessage);
             this.tabGönderim.Controls.Add(this.rtbLog);
