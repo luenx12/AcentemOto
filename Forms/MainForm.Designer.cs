@@ -15,1086 +15,1056 @@ namespace AcentemOto.Forms
 
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tabControl = new MaterialSkin.Controls.MaterialTabControl();
-            this.tabGönderim = new System.Windows.Forms.TabPage();
-            this.tabDashboard = new System.Windows.Forms.TabPage();
-            this.tabKategori = new System.Windows.Forms.TabPage();
-            
-            this.dgvNumbers = new System.Windows.Forms.DataGridView();
-            this.btnLoadExcel = new MaterialSkin.Controls.MaterialButton();
-            this.btnExport = new MaterialSkin.Controls.MaterialButton();
-            this.cmbProfile = new MaterialSkin.Controls.MaterialComboBox();
-            this.btnConnect = new MaterialSkin.Controls.MaterialButton();
-            this.btnStartSending = new MaterialSkin.Controls.MaterialButton();
-            this.btnStop = new MaterialSkin.Controls.MaterialButton();
-            this.chkHeadless = new MaterialSkin.Controls.MaterialCheckbox();
-            
-            this.btnAttachment = new MaterialSkin.Controls.MaterialButton();
-            this.lblAttachment = new MaterialSkin.Controls.MaterialLabel();
-            this.chkSchedule = new MaterialSkin.Controls.MaterialCheckbox();
-            this.dtpSchedule = new System.Windows.Forms.DateTimePicker();
-            
-            this.txtMessage = new MaterialSkin.Controls.MaterialMultiLineTextBox2();
-            this.rtbLog = new System.Windows.Forms.RichTextBox();
-            this.progressBar = new MaterialSkin.Controls.MaterialProgressBar();
-            this.lblStatus = new MaterialSkin.Controls.MaterialLabel();
-            this.label1 = new MaterialSkin.Controls.MaterialLabel();
-            
-            this.lblTotal = new MaterialSkin.Controls.MaterialLabel();
-            this.lblPending = new MaterialSkin.Controls.MaterialLabel();
-            this.lblSuccess = new MaterialSkin.Controls.MaterialLabel();
-            this.lblFailed = new MaterialSkin.Controls.MaterialLabel();
-            
-            this.picLogo = new System.Windows.Forms.PictureBox();
-            this.tmrSchedule = new System.Windows.Forms.Timer(this.components);
-
-            // Kategori Gönderim tab kontrolleri
-            this.cmbCategory = new MaterialSkin.Controls.MaterialComboBox();
-            this.lblCategoryTitle = new MaterialSkin.Controls.MaterialLabel();
-            this.dtpCatStartDate = new System.Windows.Forms.DateTimePicker();
-            this.dtpCatEndDate = new System.Windows.Forms.DateTimePicker();
-            this.lblCatStartDate = new MaterialSkin.Controls.MaterialLabel();
-            this.lblCatEndDate = new MaterialSkin.Controls.MaterialLabel();
-            this.cmbFilterValue = new MaterialSkin.Controls.MaterialComboBox();
-            this.txtSingleNumber = new MaterialSkin.Controls.MaterialTextBox2();
-            this.btnFilter = new MaterialSkin.Controls.MaterialButton();
-            this.dgvFiltered = new System.Windows.Forms.DataGridView();
-            this.btnSendFiltered = new MaterialSkin.Controls.MaterialButton();
-            this.lblFilteredCount = new MaterialSkin.Controls.MaterialLabel();
-            this.lblCatMessage = new MaterialSkin.Controls.MaterialLabel();
-            this.txtCatMessage = new MaterialSkin.Controls.MaterialMultiLineTextBox2();
-            this.btnCatAttachment = new MaterialSkin.Controls.MaterialButton();
-            this.lblCatAttachment = new MaterialSkin.Controls.MaterialLabel();
-            this.rtbCatLog = new System.Windows.Forms.RichTextBox();
-            this.progressBarCat = new MaterialSkin.Controls.MaterialProgressBar();
-            this.lblCatStatus = new MaterialSkin.Controls.MaterialLabel();
-            this.pnlFilterBar = new System.Windows.Forms.Panel();
-            this.rtbHelp = new System.Windows.Forms.RichTextBox();
-            this.btnStopCat = new MaterialSkin.Controls.MaterialButton();
-            this.btnRemoveAttachment = new MaterialSkin.Controls.MaterialButton();
-            this.btnRemoveCatAttachment = new MaterialSkin.Controls.MaterialButton();
-            this.cmbCatTypeFilter = new MaterialSkin.Controls.MaterialComboBox();
-
-            this.tabControl.SuspendLayout();
-            this.tabGönderim.SuspendLayout();
-            this.tabDashboard.SuspendLayout();
-            this.tabKategori.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvNumbers)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvFiltered)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
-            this.SuspendLayout();
-
-            // 
-            // picLogo
-            // 
-            this.picLogo.Image = System.Drawing.Image.FromFile("logo.png");
-            this.picLogo.Location = new System.Drawing.Point(12, 70);
-            this.picLogo.Name = "picLogo";
-            this.picLogo.Size = new System.Drawing.Size(200, 65);
-            this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picLogo.TabIndex = 0;
-            this.picLogo.TabStop = false;
-
+            components = new System.ComponentModel.Container();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            tabControl = new MaterialSkin.Controls.MaterialTabControl();
+            tabGönderim = new TabPage();
+            cmbProfile = new MaterialSkin.Controls.MaterialComboBox();
+            btnLoadExcel = new MaterialSkin.Controls.MaterialButton();
+            btnExport = new MaterialSkin.Controls.MaterialButton();
+            btnConnect = new MaterialSkin.Controls.MaterialButton();
+            chkHeadless = new MaterialSkin.Controls.MaterialCheckbox();
+            cmbSpeed = new MaterialSkin.Controls.MaterialComboBox();
+            chkHash = new MaterialSkin.Controls.MaterialCheckbox();
+            btnStartSending = new MaterialSkin.Controls.MaterialButton();
+            btnStop = new MaterialSkin.Controls.MaterialButton();
+            chkSchedule = new MaterialSkin.Controls.MaterialCheckbox();
+            dtpSchedule = new DateTimePicker();
+            btnAttachment = new MaterialSkin.Controls.MaterialButton();
+            lblAttachment = new MaterialSkin.Controls.MaterialLabel();
+            btnRemoveAttachment = new MaterialSkin.Controls.MaterialButton();
+            label1 = new MaterialSkin.Controls.MaterialLabel();
+            txtMessage = new MaterialSkin.Controls.MaterialMultiLineTextBox2();
+            rtbLog = new RichTextBox();
+            dgvNumbers = new DataGridView();
+            progressBar = new MaterialSkin.Controls.MaterialProgressBar();
+            lblStatus = new MaterialSkin.Controls.MaterialLabel();
+            tabKategori = new TabPage();
+            pnlFilterBar = new Panel();
+            cmbCategory = new MaterialSkin.Controls.MaterialComboBox();
+            cmbCatTypeFilter = new MaterialSkin.Controls.MaterialComboBox();
+            lblCatStartDate = new MaterialSkin.Controls.MaterialLabel();
+            dtpCatStartDate = new DateTimePicker();
+            lblCatEndDate = new MaterialSkin.Controls.MaterialLabel();
+            dtpCatEndDate = new DateTimePicker();
+            cmbFilterValue = new MaterialSkin.Controls.MaterialComboBox();
+            txtSingleNumber = new MaterialSkin.Controls.MaterialTextBox2();
+            btnFilter = new MaterialSkin.Controls.MaterialButton();
+            dgvFiltered = new DataGridView();
+            btnSendFiltered = new MaterialSkin.Controls.MaterialButton();
+            btnStopCat = new MaterialSkin.Controls.MaterialButton();
+            btnRemoveCatAttachment = new MaterialSkin.Controls.MaterialButton();
+            lblFilteredCount = new MaterialSkin.Controls.MaterialLabel();
+            lblCatMessage = new MaterialSkin.Controls.MaterialLabel();
+            txtCatMessage = new MaterialSkin.Controls.MaterialMultiLineTextBox2();
+            btnCatAttachment = new MaterialSkin.Controls.MaterialButton();
+            lblCatAttachment = new MaterialSkin.Controls.MaterialLabel();
+            rtbHelp = new RichTextBox();
+            rtbCatLog = new RichTextBox();
+            progressBarCat = new MaterialSkin.Controls.MaterialProgressBar();
+            lblCatStatus = new MaterialSkin.Controls.MaterialLabel();
+            tabDashboard = new TabPage();
+            lblTotal = new MaterialSkin.Controls.MaterialLabel();
+            lblPending = new MaterialSkin.Controls.MaterialLabel();
+            lblSuccess = new MaterialSkin.Controls.MaterialLabel();
+            lblFailed = new MaterialSkin.Controls.MaterialLabel();
+            picLogo = new PictureBox();
+            tmrSchedule = new System.Windows.Forms.Timer(components);
+            lblCategoryTitle = new MaterialSkin.Controls.MaterialLabel();
+            tabControl.SuspendLayout();
+            tabGönderim.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvNumbers).BeginInit();
+            tabKategori.SuspendLayout();
+            pnlFilterBar.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvFiltered).BeginInit();
+            tabDashboard.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picLogo).BeginInit();
+            SuspendLayout();
             // 
             // tabControl
             // 
-            this.tabControl.Controls.Add(this.tabGönderim);
-            this.tabControl.Controls.Add(this.tabKategori);
-            this.tabControl.Controls.Add(this.tabDashboard);
-            this.tabControl.Depth = 0;
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl.Location = new System.Drawing.Point(10, 145);
-            this.tabControl.MouseState = MaterialSkin.MouseState.HOVER;
-            this.tabControl.Multiline = true;
-            this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1180, 645);
-            this.tabControl.TabIndex = 1;
-
+            tabControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabControl.Controls.Add(tabGönderim);
+            tabControl.Controls.Add(tabKategori);
+            tabControl.Controls.Add(tabDashboard);
+            tabControl.Depth = 0;
+            tabControl.Location = new Point(12, 149);
+            tabControl.MouseState = MaterialSkin.MouseState.HOVER;
+            tabControl.Multiline = true;
+            tabControl.Name = "tabControl";
+            tabControl.SelectedIndex = 0;
+            tabControl.Size = new Size(1244, 801);
+            tabControl.TabIndex = 1;
             // 
             // tabGönderim
             // 
-            this.tabGönderim.BackColor = System.Drawing.Color.White;
-            this.tabGönderim.Controls.Add(this.cmbProfile);
-            this.tabGönderim.Controls.Add(this.btnLoadExcel);
-            this.tabGönderim.Controls.Add(this.btnExport);
-            this.tabGönderim.Controls.Add(this.btnConnect);
-            this.tabGönderim.Controls.Add(this.chkHeadless);
-            this.tabGönderim.Controls.Add(this.btnStartSending);
-            this.tabGönderim.Controls.Add(this.btnStop);
-            this.tabGönderim.Controls.Add(this.chkSchedule);
-            this.tabGönderim.Controls.Add(this.dtpSchedule);
-            this.tabGönderim.Controls.Add(this.btnAttachment);
-            this.tabGönderim.Controls.Add(this.lblAttachment);
-            this.tabGönderim.Controls.Add(this.btnRemoveAttachment);
-            this.tabGönderim.Controls.Add(this.label1);
-            this.tabGönderim.Controls.Add(this.txtMessage);
-            this.tabGönderim.Controls.Add(this.rtbLog);
-            this.tabGönderim.Controls.Add(this.dgvNumbers);
-            this.tabGönderim.Controls.Add(this.progressBar);
-            this.tabGönderim.Controls.Add(this.lblStatus);
-            this.tabGönderim.Location = new System.Drawing.Point(4, 26);
-            this.tabGönderim.Name = "tabGönderim";
-            this.tabGönderim.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGönderim.Size = new System.Drawing.Size(1172, 615);
-            this.tabGönderim.TabIndex = 0;
-            this.tabGönderim.Text = "Gönderim Ekranı";
-
-            // 
-            // tabDashboard
-            // 
-            this.tabDashboard.BackColor = System.Drawing.Color.White;
-            this.tabDashboard.Controls.Add(this.lblTotal);
-            this.tabDashboard.Controls.Add(this.lblPending);
-            this.tabDashboard.Controls.Add(this.lblSuccess);
-            this.tabDashboard.Controls.Add(this.lblFailed);
-            this.tabDashboard.Location = new System.Drawing.Point(4, 26);
-            this.tabDashboard.Name = "tabDashboard";
-            this.tabDashboard.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDashboard.Size = new System.Drawing.Size(1172, 615);
-            this.tabDashboard.TabIndex = 1;
-            this.tabDashboard.Text = "Canlı İstatistikler";
-
-            // 
-            // dgvNumbers
-            // 
-            this.dgvNumbers.BackgroundColor = System.Drawing.Color.WhiteSmoke;
-            this.dgvNumbers.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dgvNumbers.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            System.Windows.Forms.DataGridViewCellStyle headerStyle = new System.Windows.Forms.DataGridViewCellStyle();
-            headerStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            headerStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(211)))), ((int)(((byte)(21)))), ((int)(((byte)(21)))));
-            headerStyle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            headerStyle.ForeColor = System.Drawing.Color.White;
-            headerStyle.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            headerStyle.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            headerStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvNumbers.ColumnHeadersDefaultCellStyle = headerStyle;
-            this.dgvNumbers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvNumbers.EnableHeadersVisualStyles = false;
-            this.dgvNumbers.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            this.dgvNumbers.Location = new System.Drawing.Point(15, 15);
-            this.dgvNumbers.Name = "dgvNumbers";
-            this.dgvNumbers.RowTemplate.Height = 25;
-            this.dgvNumbers.Size = new System.Drawing.Size(630, 360);
-            this.dgvNumbers.TabIndex = 0;
-
+            tabGönderim.BackColor = Color.White;
+            tabGönderim.Controls.Add(cmbProfile);
+            tabGönderim.Controls.Add(btnLoadExcel);
+            tabGönderim.Controls.Add(btnExport);
+            tabGönderim.Controls.Add(btnConnect);
+            tabGönderim.Controls.Add(chkHeadless);
+            tabGönderim.Controls.Add(cmbSpeed);
+            tabGönderim.Controls.Add(chkHash);
+            tabGönderim.Controls.Add(btnStartSending);
+            tabGönderim.Controls.Add(btnStop);
+            tabGönderim.Controls.Add(chkSchedule);
+            tabGönderim.Controls.Add(dtpSchedule);
+            tabGönderim.Controls.Add(btnAttachment);
+            tabGönderim.Controls.Add(lblAttachment);
+            tabGönderim.Controls.Add(btnRemoveAttachment);
+            tabGönderim.Controls.Add(label1);
+            tabGönderim.Controls.Add(txtMessage);
+            tabGönderim.Controls.Add(rtbLog);
+            tabGönderim.Controls.Add(dgvNumbers);
+            tabGönderim.Controls.Add(progressBar);
+            tabGönderim.Controls.Add(lblStatus);
+            tabGönderim.Location = new Point(4, 26);
+            tabGönderim.Name = "tabGönderim";
+            tabGönderim.Padding = new Padding(3);
+            tabGönderim.Size = new Size(1236, 771);
+            tabGönderim.TabIndex = 0;
+            tabGönderim.Text = "Gönderim Ekranı";
             // 
             // cmbProfile
             // 
-            this.cmbProfile.AutoResize = false;
-            this.cmbProfile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.cmbProfile.Depth = 0;
-            this.cmbProfile.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.cmbProfile.DropDownHeight = 174;
-            this.cmbProfile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbProfile.DropDownWidth = 121;
-            this.cmbProfile.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-            this.cmbProfile.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbProfile.FormattingEnabled = true;
-            this.cmbProfile.Hint = "WhatsApp Profili Seçin";
-            this.cmbProfile.IntegralHeight = false;
-            this.cmbProfile.ItemHeight = 43;
-            this.cmbProfile.Items.AddRange(new object[] { "Varsayılan (Default)", "Satış Hattı", "Destek Hattı", "Profil 4" });
-            this.cmbProfile.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.cmbProfile.Location = new System.Drawing.Point(15, 390);
-            this.cmbProfile.MaxDropDownItems = 4;
-            this.cmbProfile.MouseState = MaterialSkin.MouseState.OUT;
-            this.cmbProfile.Name = "cmbProfile";
-            this.cmbProfile.Size = new System.Drawing.Size(280, 49);
-            this.cmbProfile.StartIndex = 0;
-            this.cmbProfile.TabIndex = 20;
-
+            cmbProfile.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            cmbProfile.AutoResize = false;
+            cmbProfile.BackColor = Color.FromArgb(255, 255, 255);
+            cmbProfile.Depth = 0;
+            cmbProfile.DrawMode = DrawMode.OwnerDrawVariable;
+            cmbProfile.DropDownHeight = 174;
+            cmbProfile.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbProfile.DropDownWidth = 121;
+            cmbProfile.Font = new Font("Microsoft Sans Serif", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            cmbProfile.ForeColor = Color.FromArgb(222, 0, 0, 0);
+            cmbProfile.FormattingEnabled = true;
+            cmbProfile.Hint = "WhatsApp Profili Seçin";
+            cmbProfile.IntegralHeight = false;
+            cmbProfile.ItemHeight = 43;
+            cmbProfile.Items.AddRange(new object[] { "Varsayılan (Default)", "Satış Hattı", "Destek Hattı", "Profil 4" });
+            cmbProfile.Location = new Point(15, 546);
+            cmbProfile.MaxDropDownItems = 4;
+            cmbProfile.MouseState = MaterialSkin.MouseState.OUT;
+            cmbProfile.Name = "cmbProfile";
+            cmbProfile.Size = new Size(280, 49);
+            cmbProfile.StartIndex = 0;
+            cmbProfile.TabIndex = 20;
             // 
             // btnLoadExcel
             // 
-            this.btnLoadExcel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnLoadExcel.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnLoadExcel.Depth = 0;
-            this.btnLoadExcel.HighEmphasis = true;
-            this.btnLoadExcel.Icon = null;
-            this.btnLoadExcel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.btnLoadExcel.Location = new System.Drawing.Point(15, 500);
-            this.btnLoadExcel.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnLoadExcel.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnLoadExcel.Name = "btnLoadExcel";
-            this.btnLoadExcel.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnLoadExcel.Size = new System.Drawing.Size(130, 36);
-            this.btnLoadExcel.TabIndex = 1;
-            this.btnLoadExcel.Text = " Excel Yükle ";
-            this.btnLoadExcel.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            this.btnLoadExcel.UseAccentColor = false;
-            this.btnLoadExcel.UseVisualStyleBackColor = true;
-            this.btnLoadExcel.Click += new System.EventHandler(this.BtnLoadExcel_Click);
-
+            btnLoadExcel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnLoadExcel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnLoadExcel.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnLoadExcel.Depth = 0;
+            btnLoadExcel.HighEmphasis = true;
+            btnLoadExcel.Icon = null;
+            btnLoadExcel.Location = new Point(15, 656);
+            btnLoadExcel.Margin = new Padding(4, 6, 4, 6);
+            btnLoadExcel.MouseState = MaterialSkin.MouseState.HOVER;
+            btnLoadExcel.Name = "btnLoadExcel";
+            btnLoadExcel.NoAccentTextColor = Color.Empty;
+            btnLoadExcel.Size = new Size(117, 36);
+            btnLoadExcel.TabIndex = 1;
+            btnLoadExcel.Text = " Excel Yükle ";
+            btnLoadExcel.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnLoadExcel.UseAccentColor = false;
+            btnLoadExcel.UseVisualStyleBackColor = true;
+            btnLoadExcel.Click += BtnLoadExcel_Click;
             // 
             // btnExport
             // 
-            this.btnExport.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnExport.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnExport.Depth = 0;
-            this.btnExport.HighEmphasis = true;
-            this.btnExport.Icon = null;
-            this.btnExport.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.btnExport.Location = new System.Drawing.Point(165, 500);
-            this.btnExport.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnExport.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnExport.Name = "btnExport";
-            this.btnExport.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnExport.Size = new System.Drawing.Size(130, 36);
-            this.btnExport.TabIndex = 21;
-            this.btnExport.Text = " Rapor Al ";
-            this.btnExport.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined;
-            this.btnExport.UseAccentColor = false;
-            this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.BtnExport_Click);
-
+            btnExport.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnExport.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnExport.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnExport.Depth = 0;
+            btnExport.HighEmphasis = true;
+            btnExport.Icon = null;
+            btnExport.Location = new Point(165, 656);
+            btnExport.Margin = new Padding(4, 6, 4, 6);
+            btnExport.MouseState = MaterialSkin.MouseState.HOVER;
+            btnExport.Name = "btnExport";
+            btnExport.NoAccentTextColor = Color.Empty;
+            btnExport.Size = new Size(94, 36);
+            btnExport.TabIndex = 21;
+            btnExport.Text = " Rapor Al ";
+            btnExport.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined;
+            btnExport.UseAccentColor = false;
+            btnExport.UseVisualStyleBackColor = true;
+            btnExport.Click += BtnExport_Click;
             // 
             // btnConnect
             // 
-            this.btnConnect.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnConnect.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnConnect.Depth = 0;
-            this.btnConnect.HighEmphasis = true;
-            this.btnConnect.Icon = null;
-            this.btnConnect.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.btnConnect.Location = new System.Drawing.Point(15, 450);
-            this.btnConnect.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnConnect.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnConnect.Size = new System.Drawing.Size(280, 36);
-            this.btnConnect.TabIndex = 2;
-            this.btnConnect.Text = "WhatsApp Bağlan";
-            this.btnConnect.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            this.btnConnect.UseAccentColor = false;
-            this.btnConnect.UseVisualStyleBackColor = true;
-            this.btnConnect.Click += new System.EventHandler(this.BtnConnect_Click);
-
+            btnConnect.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnConnect.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnConnect.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnConnect.Depth = 0;
+            btnConnect.HighEmphasis = true;
+            btnConnect.Icon = null;
+            btnConnect.Location = new Point(15, 606);
+            btnConnect.Margin = new Padding(4, 6, 4, 6);
+            btnConnect.MouseState = MaterialSkin.MouseState.HOVER;
+            btnConnect.Name = "btnConnect";
+            btnConnect.NoAccentTextColor = Color.Empty;
+            btnConnect.Size = new Size(162, 36);
+            btnConnect.TabIndex = 2;
+            btnConnect.Text = "WhatsApp Bağlan";
+            btnConnect.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnConnect.UseAccentColor = false;
+            btnConnect.UseVisualStyleBackColor = true;
+            btnConnect.Click += BtnConnect_Click;
             // 
             // chkHeadless
             // 
-            this.chkHeadless.AutoSize = true;
-            this.chkHeadless.Depth = 0;
-            this.chkHeadless.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.chkHeadless.Location = new System.Drawing.Point(320, 396);
-            this.chkHeadless.Margin = new System.Windows.Forms.Padding(0);
-            this.chkHeadless.MouseLocation = new System.Drawing.Point(-1, -1);
-            this.chkHeadless.MouseState = MaterialSkin.MouseState.HOVER;
-            this.chkHeadless.Name = "chkHeadless";
-            this.chkHeadless.ReadOnly = false;
-            this.chkHeadless.Ripple = true;
-            this.chkHeadless.Size = new System.Drawing.Size(185, 37);
-            this.chkHeadless.TabIndex = 5;
-            this.chkHeadless.Text = "Headless Mod (Gizli)";
-            this.chkHeadless.UseVisualStyleBackColor = true;
-
+            chkHeadless.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            chkHeadless.AutoSize = true;
+            chkHeadless.Depth = 0;
+            chkHeadless.Location = new Point(320, 552);
+            chkHeadless.Margin = new Padding(0);
+            chkHeadless.MouseLocation = new Point(-1, -1);
+            chkHeadless.MouseState = MaterialSkin.MouseState.HOVER;
+            chkHeadless.Name = "chkHeadless";
+            chkHeadless.ReadOnly = false;
+            chkHeadless.Ripple = true;
+            chkHeadless.Size = new Size(182, 37);
+            chkHeadless.TabIndex = 5;
+            chkHeadless.Text = "Headless Mod (Gizli)";
+            chkHeadless.UseVisualStyleBackColor = true;
+            // 
+            // cmbSpeed
+            // 
+            cmbSpeed.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            cmbSpeed.AutoResize = false;
+            cmbSpeed.BackColor = Color.FromArgb(255, 255, 255);
+            cmbSpeed.Depth = 0;
+            cmbSpeed.DrawMode = DrawMode.OwnerDrawVariable;
+            cmbSpeed.DropDownHeight = 174;
+            cmbSpeed.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbSpeed.DropDownWidth = 121;
+            cmbSpeed.Font = new Font("Microsoft Sans Serif", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            cmbSpeed.ForeColor = Color.FromArgb(222, 0, 0, 0);
+            cmbSpeed.FormattingEnabled = true;
+            cmbSpeed.Hint = "Gönderim Hızı Seçin";
+            cmbSpeed.IntegralHeight = false;
+            cmbSpeed.ItemHeight = 43;
+            cmbSpeed.Items.AddRange(new object[] { "Hızlı (5-11 sn)", "Orta (12-29 sn) - Önerilen", "Yavaş (25-41 sn)" });
+            cmbSpeed.Location = new Point(320, 595);
+            cmbSpeed.MaxDropDownItems = 4;
+            cmbSpeed.MouseState = MaterialSkin.MouseState.OUT;
+            cmbSpeed.Name = "cmbSpeed";
+            cmbSpeed.Size = new Size(260, 49);
+            cmbSpeed.StartIndex = 1;
+            cmbSpeed.TabIndex = 21;
+            // 
+            // chkHash
+            // 
+            chkHash.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            chkHash.AutoSize = true;
+            chkHash.Depth = 0;
+            chkHash.Location = new Point(320, 706);
+            chkHash.Margin = new Padding(0);
+            chkHash.MouseLocation = new Point(-1, -1);
+            chkHash.MouseState = MaterialSkin.MouseState.HOVER;
+            chkHash.Name = "chkHash";
+            chkHash.ReadOnly = false;
+            chkHash.Ripple = true;
+            chkHash.Size = new Size(370, 37);
+            chkHash.TabIndex = 22;
+            chkHash.Text = "Mesajın sonuna benzersiz kod ekle (Anti-Spam)";
+            chkHash.UseVisualStyleBackColor = true;
             // 
             // btnStartSending
             // 
-            this.btnStartSending.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnStartSending.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnStartSending.Depth = 0;
-            this.btnStartSending.HighEmphasis = true;
-            this.btnStartSending.Icon = null;
-            this.btnStartSending.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.btnStartSending.Location = new System.Drawing.Point(15, 550);
-            this.btnStartSending.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnStartSending.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnStartSending.Name = "btnStartSending";
-            this.btnStartSending.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnStartSending.Size = new System.Drawing.Size(155, 36);
-            this.btnStartSending.TabIndex = 3;
-            this.btnStartSending.Text = " Gönderimi Başlat ";
-            this.btnStartSending.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            this.btnStartSending.UseAccentColor = false;
-            this.btnStartSending.UseVisualStyleBackColor = true;
-            this.btnStartSending.Click += new System.EventHandler(this.BtnStartSending_Click);
-
+            btnStartSending.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnStartSending.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnStartSending.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnStartSending.Depth = 0;
+            btnStartSending.HighEmphasis = true;
+            btnStartSending.Icon = null;
+            btnStartSending.Location = new Point(15, 706);
+            btnStartSending.Margin = new Padding(4, 6, 4, 6);
+            btnStartSending.MouseState = MaterialSkin.MouseState.HOVER;
+            btnStartSending.Name = "btnStartSending";
+            btnStartSending.NoAccentTextColor = Color.Empty;
+            btnStartSending.Size = new Size(162, 36);
+            btnStartSending.TabIndex = 3;
+            btnStartSending.Text = " Gönderimi Başlat ";
+            btnStartSending.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnStartSending.UseAccentColor = false;
+            btnStartSending.UseVisualStyleBackColor = true;
+            btnStartSending.Click += BtnStartSending_Click;
             // 
             // btnStop
             // 
-            this.btnStop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnStop.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnStop.Depth = 0;
-            this.btnStop.HighEmphasis = true;
-            this.btnStop.Icon = null;
-            this.btnStop.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.btnStop.Location = new System.Drawing.Point(185, 550);
-            this.btnStop.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnStop.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnStop.Name = "btnStop";
-            this.btnStop.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnStop.Size = new System.Drawing.Size(110, 36);
-            this.btnStop.TabIndex = 4;
-            this.btnStop.Text = " Durdur ";
-            this.btnStop.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            this.btnStop.UseAccentColor = true;
-            this.btnStop.UseVisualStyleBackColor = true;
-            this.btnStop.Click += new System.EventHandler(this.BtnStop_Click);
-            this.btnStop.Enabled = false;
-
+            btnStop.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnStop.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnStop.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnStop.Depth = 0;
+            btnStop.Enabled = false;
+            btnStop.HighEmphasis = true;
+            btnStop.Icon = null;
+            btnStop.Location = new Point(185, 706);
+            btnStop.Margin = new Padding(4, 6, 4, 6);
+            btnStop.MouseState = MaterialSkin.MouseState.HOVER;
+            btnStop.Name = "btnStop";
+            btnStop.NoAccentTextColor = Color.Empty;
+            btnStop.Size = new Size(82, 36);
+            btnStop.TabIndex = 4;
+            btnStop.Text = " Durdur ";
+            btnStop.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnStop.UseAccentColor = true;
+            btnStop.UseVisualStyleBackColor = true;
+            btnStop.Click += BtnStop_Click;
             // 
             // chkSchedule
             // 
-            this.chkSchedule.AutoSize = true;
-            this.chkSchedule.Depth = 0;
-            this.chkSchedule.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.chkSchedule.Location = new System.Drawing.Point(320, 499);
-            this.chkSchedule.Margin = new System.Windows.Forms.Padding(0);
-            this.chkSchedule.MouseLocation = new System.Drawing.Point(-1, -1);
-            this.chkSchedule.MouseState = MaterialSkin.MouseState.HOVER;
-            this.chkSchedule.Name = "chkSchedule";
-            this.chkSchedule.ReadOnly = false;
-            this.chkSchedule.Ripple = true;
-            this.chkSchedule.Size = new System.Drawing.Size(125, 37);
-            this.chkSchedule.TabIndex = 22;
-            this.chkSchedule.Text = "Zamanlayıcı:";
-            this.chkSchedule.UseVisualStyleBackColor = true;
-            this.chkSchedule.CheckedChanged += new System.EventHandler(this.ChkSchedule_CheckedChanged);
-
+            chkSchedule.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            chkSchedule.AutoSize = true;
+            chkSchedule.Depth = 0;
+            chkSchedule.Location = new Point(320, 655);
+            chkSchedule.Margin = new Padding(0);
+            chkSchedule.MouseLocation = new Point(-1, -1);
+            chkSchedule.MouseState = MaterialSkin.MouseState.HOVER;
+            chkSchedule.Name = "chkSchedule";
+            chkSchedule.ReadOnly = false;
+            chkSchedule.Ripple = true;
+            chkSchedule.Size = new Size(127, 37);
+            chkSchedule.TabIndex = 22;
+            chkSchedule.Text = "Zamanlayıcı:";
+            chkSchedule.UseVisualStyleBackColor = true;
+            chkSchedule.CheckedChanged += ChkSchedule_CheckedChanged;
             // 
             // dtpSchedule
             // 
-            this.dtpSchedule.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dtpSchedule.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.dtpSchedule.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.dtpSchedule.Location = new System.Drawing.Point(460, 504);
-            this.dtpSchedule.Name = "dtpSchedule";
-            this.dtpSchedule.ShowUpDown = true;
-            this.dtpSchedule.Size = new System.Drawing.Size(120, 29);
-            this.dtpSchedule.TabIndex = 23;
-            this.dtpSchedule.Enabled = false;
-
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Depth = 0;
-            this.label1.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.label1.Location = new System.Drawing.Point(670, 15);
-            this.label1.MouseState = MaterialSkin.MouseState.HOVER;
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(147, 19);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Gönderilecek Mesaj:";
-
-            // 
-            // txtMessage
-            // 
-            this.txtMessage.AnimateReadOnly = false;
-            this.txtMessage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.txtMessage.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtMessage.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtMessage.Depth = 0;
-            this.txtMessage.HideSelection = true;
-            this.txtMessage.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.txtMessage.Location = new System.Drawing.Point(670, 45);
-            this.txtMessage.MaxLength = 32767;
-            this.txtMessage.MouseState = MaterialSkin.MouseState.OUT;
-            this.txtMessage.Name = "txtMessage";
-            this.txtMessage.PasswordChar = '\0';
-            this.txtMessage.ReadOnly = false;
-            this.txtMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMessage.SelectedText = "";
-            this.txtMessage.SelectionLength = 0;
-            this.txtMessage.SelectionStart = 0;
-            this.txtMessage.ShortcutsEnabled = true;
-            this.txtMessage.Size = new System.Drawing.Size(480, 240);
-            this.txtMessage.TabIndex = 7;
-            this.txtMessage.TabStop = false;
-            this.txtMessage.Text = "Sayın {İsim}, {Plaka} plakalı aracınızın trafik sigortası bitmektedir.";
-            this.txtMessage.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.txtMessage.UseSystemPasswordChar = false;
-
+            dtpSchedule.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            dtpSchedule.Enabled = false;
+            dtpSchedule.Font = new Font("Segoe UI", 12F);
+            dtpSchedule.Format = DateTimePickerFormat.Time;
+            dtpSchedule.Location = new Point(460, 660);
+            dtpSchedule.Name = "dtpSchedule";
+            dtpSchedule.ShowUpDown = true;
+            dtpSchedule.Size = new Size(120, 29);
+            dtpSchedule.TabIndex = 23;
             // 
             // btnAttachment
             // 
-            this.btnAttachment.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnAttachment.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnAttachment.Depth = 0;
-            this.btnAttachment.HighEmphasis = true;
-            this.btnAttachment.Icon = null;
-            this.btnAttachment.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.btnAttachment.Location = new System.Drawing.Point(670, 295);
-            this.btnAttachment.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnAttachment.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnAttachment.Name = "btnAttachment";
-            this.btnAttachment.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnAttachment.Size = new System.Drawing.Size(113, 36);
-            this.btnAttachment.TabIndex = 24;
-            this.btnAttachment.Text = "Görsel Seç";
-            this.btnAttachment.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined;
-            this.btnAttachment.UseAccentColor = false;
-            this.btnAttachment.UseVisualStyleBackColor = true;
-            this.btnAttachment.Click += new System.EventHandler(this.BtnAttachment_Click);
-
-            // 
-            // btnRemoveAttachment
-            // 
-            this.btnRemoveAttachment.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnRemoveAttachment.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnRemoveAttachment.Depth = 0;
-            this.btnRemoveAttachment.HighEmphasis = true;
-            this.btnRemoveAttachment.Icon = null;
-            this.btnRemoveAttachment.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.btnRemoveAttachment.Location = new System.Drawing.Point(790, 295);
-            this.btnRemoveAttachment.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnRemoveAttachment.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnRemoveAttachment.Name = "btnRemoveAttachment";
-            this.btnRemoveAttachment.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnRemoveAttachment.Size = new System.Drawing.Size(70, 36);
-            this.btnRemoveAttachment.TabIndex = 26;
-            this.btnRemoveAttachment.Text = " Kaldır ";
-            this.btnRemoveAttachment.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            this.btnRemoveAttachment.UseAccentColor = true;
-            this.btnRemoveAttachment.UseVisualStyleBackColor = true;
-            this.btnRemoveAttachment.Visible = false;
-            this.btnRemoveAttachment.Click += new System.EventHandler(this.BtnRemoveAttachment_Click);
-
+            btnAttachment.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnAttachment.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnAttachment.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnAttachment.Depth = 0;
+            btnAttachment.HighEmphasis = true;
+            btnAttachment.Icon = null;
+            btnAttachment.Location = new Point(740, 451);
+            btnAttachment.Margin = new Padding(4, 6, 4, 6);
+            btnAttachment.MouseState = MaterialSkin.MouseState.HOVER;
+            btnAttachment.Name = "btnAttachment";
+            btnAttachment.NoAccentTextColor = Color.Empty;
+            btnAttachment.Size = new Size(107, 36);
+            btnAttachment.TabIndex = 24;
+            btnAttachment.Text = "Görsel Seç";
+            btnAttachment.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined;
+            btnAttachment.UseAccentColor = false;
+            btnAttachment.UseVisualStyleBackColor = true;
+            btnAttachment.Click += BtnAttachment_Click;
             // 
             // lblAttachment
             // 
-            this.lblAttachment.AutoSize = true;
-            this.lblAttachment.Depth = 0;
-            this.lblAttachment.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblAttachment.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.lblAttachment.AutoEllipsis = true;
-            this.lblAttachment.Location = new System.Drawing.Point(870, 305);
-            this.lblAttachment.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblAttachment.Name = "lblAttachment";
-            this.lblAttachment.Size = new System.Drawing.Size(126, 19);
-            this.lblAttachment.TabIndex = 25;
-            this.lblAttachment.Text = "Dosya Seçilmedi.";
-
+            lblAttachment.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            lblAttachment.AutoEllipsis = true;
+            lblAttachment.AutoSize = true;
+            lblAttachment.Depth = 0;
+            lblAttachment.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            lblAttachment.Location = new Point(934, 461);
+            lblAttachment.MouseState = MaterialSkin.MouseState.HOVER;
+            lblAttachment.Name = "lblAttachment";
+            lblAttachment.Size = new Size(123, 19);
+            lblAttachment.TabIndex = 25;
+            lblAttachment.Text = "Dosya Seçilmedi.";
+            // 
+            // btnRemoveAttachment
+            // 
+            btnRemoveAttachment.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnRemoveAttachment.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnRemoveAttachment.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnRemoveAttachment.Depth = 0;
+            btnRemoveAttachment.HighEmphasis = true;
+            btnRemoveAttachment.Icon = null;
+            btnRemoveAttachment.Location = new Point(849, 451);
+            btnRemoveAttachment.Margin = new Padding(4, 6, 4, 6);
+            btnRemoveAttachment.MouseState = MaterialSkin.MouseState.HOVER;
+            btnRemoveAttachment.Name = "btnRemoveAttachment";
+            btnRemoveAttachment.NoAccentTextColor = Color.Empty;
+            btnRemoveAttachment.Size = new Size(75, 36);
+            btnRemoveAttachment.TabIndex = 26;
+            btnRemoveAttachment.Text = " Kaldır ";
+            btnRemoveAttachment.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnRemoveAttachment.UseAccentColor = true;
+            btnRemoveAttachment.UseVisualStyleBackColor = true;
+            btnRemoveAttachment.Visible = false;
+            btnRemoveAttachment.Click += BtnRemoveAttachment_Click;
+            // 
+            // label1
+            // 
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label1.AutoSize = true;
+            label1.Depth = 0;
+            label1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            label1.Location = new Point(734, 15);
+            label1.MouseState = MaterialSkin.MouseState.HOVER;
+            label1.Name = "label1";
+            label1.Size = new Size(143, 19);
+            label1.TabIndex = 6;
+            label1.Text = "Gönderilecek Mesaj:";
+            // 
+            // txtMessage
+            // 
+            txtMessage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            txtMessage.AnimateReadOnly = false;
+            txtMessage.BackgroundImageLayout = ImageLayout.None;
+            txtMessage.CharacterCasing = CharacterCasing.Normal;
+            txtMessage.Cursor = Cursors.IBeam;
+            txtMessage.Depth = 0;
+            txtMessage.HideSelection = true;
+            txtMessage.Location = new Point(734, 45);
+            txtMessage.MaxLength = 32767;
+            txtMessage.MouseState = MaterialSkin.MouseState.OUT;
+            txtMessage.Name = "txtMessage";
+            txtMessage.PasswordChar = '\0';
+            txtMessage.ReadOnly = false;
+            txtMessage.ScrollBars = ScrollBars.Vertical;
+            txtMessage.SelectedText = "";
+            txtMessage.SelectionLength = 0;
+            txtMessage.SelectionStart = 0;
+            txtMessage.ShortcutsEnabled = true;
+            txtMessage.Size = new Size(480, 396);
+            txtMessage.TabIndex = 7;
+            txtMessage.TabStop = false;
+            txtMessage.Text = "Sayın {İsim}, {Plaka} plakalı aracınızın trafik sigortası bitmektedir.";
+            txtMessage.TextAlign = HorizontalAlignment.Left;
+            txtMessage.UseSystemPasswordChar = false;
             // 
             // rtbLog
             // 
-            this.rtbLog.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.rtbLog.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.rtbLog.ForeColor = System.Drawing.Color.LightGreen;
-            this.rtbLog.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.rtbLog.Location = new System.Drawing.Point(670, 345);
-            this.rtbLog.Name = "rtbLog";
-            this.rtbLog.ReadOnly = true;
-            this.rtbLog.Size = new System.Drawing.Size(480, 240);
-            this.rtbLog.TabIndex = 8;
-            this.rtbLog.Text = "";
-
+            rtbLog.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            rtbLog.BackColor = Color.FromArgb(40, 40, 40);
+            rtbLog.Font = new Font("Consolas", 10F);
+            rtbLog.ForeColor = Color.LightGreen;
+            rtbLog.Location = new Point(734, 501);
+            rtbLog.Name = "rtbLog";
+            rtbLog.ReadOnly = true;
+            rtbLog.Size = new Size(480, 240);
+            rtbLog.TabIndex = 8;
+            rtbLog.Text = "";
+            // 
+            // dgvNumbers
+            // 
+            dgvNumbers.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvNumbers.BackgroundColor = Color.WhiteSmoke;
+            dgvNumbers.BorderStyle = BorderStyle.None;
+            dgvNumbers.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(211, 21, 21);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvNumbers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvNumbers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvNumbers.EnableHeadersVisualStyles = false;
+            dgvNumbers.Location = new Point(15, 15);
+            dgvNumbers.Name = "dgvNumbers";
+            dgvNumbers.Size = new Size(694, 516);
+            dgvNumbers.TabIndex = 0;
             // 
             // progressBar
             // 
-            this.progressBar.Depth = 0;
-            this.progressBar.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            this.progressBar.Location = new System.Drawing.Point(15, 595);
-            this.progressBar.MouseState = MaterialSkin.MouseState.HOVER;
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1135, 5);
-            this.progressBar.TabIndex = 9;
-
+            progressBar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            progressBar.Depth = 0;
+            progressBar.Location = new Point(15, 751);
+            progressBar.MouseState = MaterialSkin.MouseState.HOVER;
+            progressBar.Name = "progressBar";
+            progressBar.Size = new Size(1199, 5);
+            progressBar.TabIndex = 9;
             // 
             // lblStatus
             // 
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Depth = 0;
-            this.lblStatus.Font = new System.Drawing.Font("Roboto Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-            this.lblStatus.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
-            this.lblStatus.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.lblStatus.Location = new System.Drawing.Point(15, 605);
-            this.lblStatus.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(121, 17);
-            this.lblStatus.TabIndex = 10;
-            this.lblStatus.Text = "Durum: Bekliyor...";
-
+            lblStatus.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lblStatus.AutoSize = true;
+            lblStatus.Depth = 0;
+            lblStatus.Font = new Font("Roboto Medium", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            lblStatus.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
+            lblStatus.Location = new Point(15, 761);
+            lblStatus.MouseState = MaterialSkin.MouseState.HOVER;
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(114, 17);
+            lblStatus.TabIndex = 10;
+            lblStatus.Text = "Durum: Bekliyor...";
             // 
-            // lblTotal
+            // tabKategori
             // 
-            this.lblTotal.AutoSize = true;
-            this.lblTotal.Depth = 0;
-            this.lblTotal.Font = new System.Drawing.Font("Roboto", 34F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblTotal.FontType = MaterialSkin.MaterialSkinManager.fontType.H4;
-            this.lblTotal.Location = new System.Drawing.Point(60, 60);
-            this.lblTotal.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(325, 41);
-            this.lblTotal.TabIndex = 0;
-            this.lblTotal.Text = "Toplam Yüklenen: 0";
-
+            tabKategori.BackColor = Color.FromArgb(250, 250, 252);
+            tabKategori.Controls.Add(pnlFilterBar);
+            tabKategori.Controls.Add(dgvFiltered);
+            tabKategori.Controls.Add(btnSendFiltered);
+            tabKategori.Controls.Add(btnStopCat);
+            tabKategori.Controls.Add(btnRemoveCatAttachment);
+            tabKategori.Controls.Add(lblFilteredCount);
+            tabKategori.Controls.Add(lblCatMessage);
+            tabKategori.Controls.Add(txtCatMessage);
+            tabKategori.Controls.Add(btnCatAttachment);
+            tabKategori.Controls.Add(lblCatAttachment);
+            tabKategori.Controls.Add(rtbHelp);
+            tabKategori.Controls.Add(rtbCatLog);
+            tabKategori.Controls.Add(progressBarCat);
+            tabKategori.Controls.Add(lblCatStatus);
+            tabKategori.Location = new Point(4, 24);
+            tabKategori.Name = "tabKategori";
+            tabKategori.Padding = new Padding(3);
+            tabKategori.Size = new Size(1220, 734);
+            tabKategori.TabIndex = 2;
+            tabKategori.Text = "Kategori Gönderim";
             // 
-            // lblPending
+            // pnlFilterBar
             // 
-            this.lblPending.AutoSize = true;
-            this.lblPending.Depth = 0;
-            this.lblPending.Font = new System.Drawing.Font("Roboto", 34F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblPending.FontType = MaterialSkin.MaterialSkinManager.fontType.H4;
-            this.lblPending.Location = new System.Drawing.Point(60, 150);
-            this.lblPending.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblPending.Name = "lblPending";
-            this.lblPending.Size = new System.Drawing.Size(175, 41);
-            this.lblPending.TabIndex = 1;
-            this.lblPending.Text = "Bekleyen: 0";
-
-            // 
-            // lblSuccess
-            // 
-            this.lblSuccess.AutoSize = true;
-            this.lblSuccess.Depth = 0;
-            this.lblSuccess.Font = new System.Drawing.Font("Roboto", 34F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblSuccess.FontType = MaterialSkin.MaterialSkinManager.fontType.H4;
-            this.lblSuccess.ForeColor = System.Drawing.Color.Green;
-            this.lblSuccess.Location = new System.Drawing.Point(60, 240);
-            this.lblSuccess.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblSuccess.Name = "lblSuccess";
-            this.lblSuccess.Size = new System.Drawing.Size(164, 41);
-            this.lblSuccess.TabIndex = 2;
-            this.lblSuccess.Text = "Başarılı: 0";
-
-            // 
-            // lblFailed
-            // 
-            this.lblFailed.AutoSize = true;
-            this.lblFailed.Depth = 0;
-            this.lblFailed.Font = new System.Drawing.Font("Roboto", 34F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblFailed.FontType = MaterialSkin.MaterialSkinManager.fontType.H4;
-            this.lblFailed.ForeColor = System.Drawing.Color.Red;
-            this.lblFailed.Location = new System.Drawing.Point(60, 330);
-            this.lblFailed.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblFailed.Name = "lblFailed";
-            this.lblFailed.Size = new System.Drawing.Size(126, 41);
-            this.lblFailed.TabIndex = 3;
-            this.lblFailed.Text = "Hatalı: 0";
-            
-            // 
-            // tmrSchedule
-            // 
-            this.tmrSchedule.Interval = 1000;
-            this.tmrSchedule.Tick += new System.EventHandler(this.TmrSchedule_Tick);
-
-            // =============================================
-            // tabKategori - MODERN LAYOUT
-            // =============================================
-            this.tabKategori.BackColor = System.Drawing.Color.FromArgb(250, 250, 252);
-            this.tabKategori.Controls.Add(this.pnlFilterBar);
-            this.tabKategori.Controls.Add(this.dgvFiltered);
-            this.tabKategori.Controls.Add(this.btnSendFiltered);
-            this.tabKategori.Controls.Add(this.btnStopCat);
-            this.tabKategori.Controls.Add(this.btnRemoveCatAttachment);
-            this.tabKategori.Controls.Add(this.lblFilteredCount);
-            this.tabKategori.Controls.Add(this.lblCatMessage);
-            this.tabKategori.Controls.Add(this.txtCatMessage);
-            this.tabKategori.Controls.Add(this.btnCatAttachment);
-            this.tabKategori.Controls.Add(this.lblCatAttachment);
-            this.tabKategori.Controls.Add(this.rtbHelp);
-            this.tabKategori.Controls.Add(this.rtbCatLog);
-            this.tabKategori.Controls.Add(this.progressBarCat);
-            this.tabKategori.Controls.Add(this.lblCatStatus);
-            this.tabKategori.Location = new System.Drawing.Point(4, 26);
-            this.tabKategori.Name = "tabKategori";
-            this.tabKategori.Padding = new System.Windows.Forms.Padding(3);
-            this.tabKategori.Size = new System.Drawing.Size(1172, 615);
-            this.tabKategori.TabIndex = 2;
-            this.tabKategori.Text = "Kategori Gönderim";
-
-            // ─── FILTER BAR PANEL ───
-            this.pnlFilterBar.BackColor = System.Drawing.Color.FromArgb(240, 240, 245);
-            this.pnlFilterBar.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.pnlFilterBar.Controls.Add(this.cmbCategory);
-            this.pnlFilterBar.Controls.Add(this.cmbCatTypeFilter);
-            this.pnlFilterBar.Controls.Add(this.lblCatStartDate);
-            this.pnlFilterBar.Controls.Add(this.dtpCatStartDate);
-            this.pnlFilterBar.Controls.Add(this.lblCatEndDate);
-            this.pnlFilterBar.Controls.Add(this.dtpCatEndDate);
-            this.pnlFilterBar.Controls.Add(this.cmbFilterValue);
-            this.pnlFilterBar.Controls.Add(this.txtSingleNumber);
-            this.pnlFilterBar.Controls.Add(this.btnFilter);
-            this.pnlFilterBar.Location = new System.Drawing.Point(10, 8);
-            this.pnlFilterBar.Name = "pnlFilterBar";
-            this.pnlFilterBar.Size = new System.Drawing.Size(1145, 80);
-            this.pnlFilterBar.TabIndex = 50;
-
-            // 
-            // lblCategoryTitle
-            // 
-            this.lblCategoryTitle.AutoSize = true;
-            this.lblCategoryTitle.Depth = 0;
-            this.lblCategoryTitle.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-            this.lblCategoryTitle.Location = new System.Drawing.Point(10, 5);
-            this.lblCategoryTitle.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblCategoryTitle.Name = "lblCategoryTitle";
-            this.lblCategoryTitle.Size = new System.Drawing.Size(150, 19);
-            this.lblCategoryTitle.TabIndex = 30;
-            this.lblCategoryTitle.Text = "📋 Filtre Kategorisi:";
-
+            pnlFilterBar.BackColor = Color.FromArgb(240, 240, 245);
+            pnlFilterBar.Controls.Add(cmbCategory);
+            pnlFilterBar.Controls.Add(cmbCatTypeFilter);
+            pnlFilterBar.Controls.Add(lblCatStartDate);
+            pnlFilterBar.Controls.Add(dtpCatStartDate);
+            pnlFilterBar.Controls.Add(lblCatEndDate);
+            pnlFilterBar.Controls.Add(dtpCatEndDate);
+            pnlFilterBar.Controls.Add(cmbFilterValue);
+            pnlFilterBar.Controls.Add(txtSingleNumber);
+            pnlFilterBar.Controls.Add(btnFilter);
+            pnlFilterBar.Location = new Point(10, 8);
+            pnlFilterBar.Name = "pnlFilterBar";
+            pnlFilterBar.Size = new Size(1145, 80);
+            pnlFilterBar.TabIndex = 50;
             // 
             // cmbCategory
             // 
-            this.cmbCategory.AutoResize = false;
-            this.cmbCategory.BackColor = System.Drawing.Color.White;
-            this.cmbCategory.Depth = 0;
-            this.cmbCategory.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.cmbCategory.DropDownHeight = 200;
-            this.cmbCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbCategory.DropDownWidth = 230;
-            this.cmbCategory.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.cmbCategory.ForeColor = System.Drawing.Color.FromArgb(222, 0, 0, 0);
-            this.cmbCategory.FormattingEnabled = true;
-            this.cmbCategory.Hint = "Kategori Seçin";
-            this.cmbCategory.IntegralHeight = false;
-            this.cmbCategory.ItemHeight = 43;
-            this.cmbCategory.Items.AddRange(new object[] { "📅 Sigorta Tarihi (Aralık)", "📊 Durum", "🏢 Şirket", "📁 Türü (Trafik/Dask/Kasko)", "📱 Tek Numara Gönderim" });
-            this.cmbCategory.Location = new System.Drawing.Point(10, 25);
-            this.cmbCategory.MaxDropDownItems = 5;
-            this.cmbCategory.MouseState = MaterialSkin.MouseState.OUT;
-            this.cmbCategory.Name = "cmbCategory";
-            this.cmbCategory.Size = new System.Drawing.Size(280, 49);
-            this.cmbCategory.StartIndex = 0;
-            this.cmbCategory.TabIndex = 31;
-            this.cmbCategory.SelectedIndexChanged += new System.EventHandler(this.CmbCategory_SelectedIndexChanged);
-
-            // 
-            // lblCatStartDate
-            // 
-            this.lblCatStartDate.AutoSize = true;
-            this.lblCatStartDate.Depth = 0;
-            this.lblCatStartDate.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblCatStartDate.Location = new System.Drawing.Point(310, 5);
-            this.lblCatStartDate.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblCatStartDate.Name = "lblCatStartDate";
-            this.lblCatStartDate.Size = new System.Drawing.Size(100, 19);
-            this.lblCatStartDate.TabIndex = 32;
-            this.lblCatStartDate.Text = "Başlangıç Tarihi:";
-            this.lblCatStartDate.Visible = false;
-
-            // 
-            // dtpCatStartDate
-            // 
-            this.dtpCatStartDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpCatStartDate.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.dtpCatStartDate.Location = new System.Drawing.Point(310, 32);
-            this.dtpCatStartDate.Name = "dtpCatStartDate";
-            this.dtpCatStartDate.Size = new System.Drawing.Size(155, 29);
-            this.dtpCatStartDate.TabIndex = 33;
-            this.dtpCatStartDate.Visible = false;
-
-            // 
-            // lblCatEndDate
-            // 
-            this.lblCatEndDate.AutoSize = true;
-            this.lblCatEndDate.Depth = 0;
-            this.lblCatEndDate.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblCatEndDate.Location = new System.Drawing.Point(480, 5);
-            this.lblCatEndDate.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblCatEndDate.Name = "lblCatEndDate";
-            this.lblCatEndDate.Size = new System.Drawing.Size(50, 19);
-            this.lblCatEndDate.TabIndex = 34;
-            this.lblCatEndDate.Text = "Bitiş Tarihi:";
-            this.lblCatEndDate.Visible = false;
-
-            // 
-            // dtpCatEndDate
-            // 
-            this.dtpCatEndDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpCatEndDate.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.dtpCatEndDate.Location = new System.Drawing.Point(480, 32);
-            this.dtpCatEndDate.Name = "dtpCatEndDate";
-            this.dtpCatEndDate.Size = new System.Drawing.Size(155, 29);
-            this.dtpCatEndDate.TabIndex = 35;
-            this.dtpCatEndDate.Visible = false;
-
+            cmbCategory.AutoResize = false;
+            cmbCategory.BackColor = Color.White;
+            cmbCategory.Depth = 0;
+            cmbCategory.DrawMode = DrawMode.OwnerDrawVariable;
+            cmbCategory.DropDownHeight = 217;
+            cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbCategory.DropDownWidth = 230;
+            cmbCategory.Font = new Font("Segoe UI", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            cmbCategory.ForeColor = Color.FromArgb(222, 0, 0, 0);
+            cmbCategory.FormattingEnabled = true;
+            cmbCategory.Hint = "Kategori Seçin";
+            cmbCategory.IntegralHeight = false;
+            cmbCategory.ItemHeight = 43;
+            cmbCategory.Items.AddRange(new object[] { "📅 Sigorta Tarihi (Aralık)", "📊 Durum", "🏢 Şirket", "📁 Türü (Trafik/Dask/Kasko)", "📱 Tek Numara Gönderim" });
+            cmbCategory.Location = new Point(10, 25);
+            cmbCategory.MaxDropDownItems = 5;
+            cmbCategory.MouseState = MaterialSkin.MouseState.OUT;
+            cmbCategory.Name = "cmbCategory";
+            cmbCategory.Size = new Size(280, 49);
+            cmbCategory.StartIndex = 0;
+            cmbCategory.TabIndex = 31;
+            cmbCategory.SelectedIndexChanged += CmbCategory_SelectedIndexChanged;
             // 
             // cmbCatTypeFilter
             // 
-            this.cmbCatTypeFilter.AutoResize = false;
-            this.cmbCatTypeFilter.BackColor = System.Drawing.Color.White;
-            this.cmbCatTypeFilter.Depth = 0;
-            this.cmbCatTypeFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.cmbCatTypeFilter.DropDownHeight = 200;
-            this.cmbCatTypeFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbCatTypeFilter.DropDownWidth = 200;
-            this.cmbCatTypeFilter.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.cmbCatTypeFilter.ForeColor = System.Drawing.Color.FromArgb(222, 0, 0, 0);
-            this.cmbCatTypeFilter.FormattingEnabled = true;
-            this.cmbCatTypeFilter.Hint = "Tür Seçin (Opsiyonel)";
-            this.cmbCatTypeFilter.IntegralHeight = false;
-            this.cmbCatTypeFilter.ItemHeight = 43;
-            this.cmbCatTypeFilter.Location = new System.Drawing.Point(660, 25);
-            this.cmbCatTypeFilter.MaxDropDownItems = 8;
-            this.cmbCatTypeFilter.MouseState = MaterialSkin.MouseState.OUT;
-            this.cmbCatTypeFilter.Name = "cmbCatTypeFilter";
-            this.cmbCatTypeFilter.Size = new System.Drawing.Size(230, 49);
-            this.cmbCatTypeFilter.StartIndex = -1;
-            this.cmbCatTypeFilter.TabIndex = 36;
-            this.cmbCatTypeFilter.Visible = false;
-
+            cmbCatTypeFilter.AutoResize = false;
+            cmbCatTypeFilter.BackColor = Color.White;
+            cmbCatTypeFilter.Depth = 0;
+            cmbCatTypeFilter.DrawMode = DrawMode.OwnerDrawVariable;
+            cmbCatTypeFilter.DropDownHeight = 174;
+            cmbCatTypeFilter.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbCatTypeFilter.DropDownWidth = 200;
+            cmbCatTypeFilter.Font = new Font("Segoe UI", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            cmbCatTypeFilter.ForeColor = Color.FromArgb(222, 0, 0, 0);
+            cmbCatTypeFilter.FormattingEnabled = true;
+            cmbCatTypeFilter.Hint = "Tür Seçin (Opsiyonel)";
+            cmbCatTypeFilter.IntegralHeight = false;
+            cmbCatTypeFilter.ItemHeight = 43;
+            cmbCatTypeFilter.Location = new Point(660, 25);
+            cmbCatTypeFilter.MaxDropDownItems = 4;
+            cmbCatTypeFilter.MouseState = MaterialSkin.MouseState.OUT;
+            cmbCatTypeFilter.Name = "cmbCatTypeFilter";
+            cmbCatTypeFilter.Size = new Size(230, 49);
+            cmbCatTypeFilter.StartIndex = -1;
+            cmbCatTypeFilter.TabIndex = 36;
+            cmbCatTypeFilter.Visible = false;
+            // 
+            // lblCatStartDate
+            // 
+            lblCatStartDate.AutoSize = true;
+            lblCatStartDate.Depth = 0;
+            lblCatStartDate.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            lblCatStartDate.Location = new Point(310, 5);
+            lblCatStartDate.MouseState = MaterialSkin.MouseState.HOVER;
+            lblCatStartDate.Name = "lblCatStartDate";
+            lblCatStartDate.Size = new Size(120, 19);
+            lblCatStartDate.TabIndex = 32;
+            lblCatStartDate.Text = "Başlangıç Tarihi:";
+            lblCatStartDate.Visible = false;
+            // 
+            // dtpCatStartDate
+            // 
+            dtpCatStartDate.Font = new Font("Segoe UI", 12F);
+            dtpCatStartDate.Format = DateTimePickerFormat.Short;
+            dtpCatStartDate.Location = new Point(310, 32);
+            dtpCatStartDate.Name = "dtpCatStartDate";
+            dtpCatStartDate.Size = new Size(155, 29);
+            dtpCatStartDate.TabIndex = 33;
+            dtpCatStartDate.Visible = false;
+            // 
+            // lblCatEndDate
+            // 
+            lblCatEndDate.AutoSize = true;
+            lblCatEndDate.Depth = 0;
+            lblCatEndDate.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            lblCatEndDate.Location = new Point(480, 5);
+            lblCatEndDate.MouseState = MaterialSkin.MouseState.HOVER;
+            lblCatEndDate.Name = "lblCatEndDate";
+            lblCatEndDate.Size = new Size(81, 19);
+            lblCatEndDate.TabIndex = 34;
+            lblCatEndDate.Text = "Bitiş Tarihi:";
+            lblCatEndDate.Visible = false;
+            // 
+            // dtpCatEndDate
+            // 
+            dtpCatEndDate.Font = new Font("Segoe UI", 12F);
+            dtpCatEndDate.Format = DateTimePickerFormat.Short;
+            dtpCatEndDate.Location = new Point(480, 32);
+            dtpCatEndDate.Name = "dtpCatEndDate";
+            dtpCatEndDate.Size = new Size(155, 29);
+            dtpCatEndDate.TabIndex = 35;
+            dtpCatEndDate.Visible = false;
             // 
             // cmbFilterValue
             // 
-            this.cmbFilterValue.AutoResize = false;
-            this.cmbFilterValue.BackColor = System.Drawing.Color.White;
-            this.cmbFilterValue.Depth = 0;
-            this.cmbFilterValue.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.cmbFilterValue.DropDownHeight = 200;
-            this.cmbFilterValue.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFilterValue.DropDownWidth = 200;
-            this.cmbFilterValue.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.cmbFilterValue.ForeColor = System.Drawing.Color.FromArgb(222, 0, 0, 0);
-            this.cmbFilterValue.FormattingEnabled = true;
-            this.cmbFilterValue.Hint = "Değer Seçin";
-            this.cmbFilterValue.IntegralHeight = false;
-            this.cmbFilterValue.ItemHeight = 43;
-            this.cmbFilterValue.Location = new System.Drawing.Point(310, 25);
-            this.cmbFilterValue.MaxDropDownItems = 8;
-            this.cmbFilterValue.MouseState = MaterialSkin.MouseState.OUT;
-            this.cmbFilterValue.Name = "cmbFilterValue";
-            this.cmbFilterValue.Size = new System.Drawing.Size(280, 49);
-            this.cmbFilterValue.StartIndex = -1;
-            this.cmbFilterValue.TabIndex = 36;
-            this.cmbFilterValue.Visible = false;
-
+            cmbFilterValue.AutoResize = false;
+            cmbFilterValue.BackColor = Color.White;
+            cmbFilterValue.Depth = 0;
+            cmbFilterValue.DrawMode = DrawMode.OwnerDrawVariable;
+            cmbFilterValue.DropDownHeight = 174;
+            cmbFilterValue.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbFilterValue.DropDownWidth = 200;
+            cmbFilterValue.Font = new Font("Segoe UI", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            cmbFilterValue.ForeColor = Color.FromArgb(222, 0, 0, 0);
+            cmbFilterValue.FormattingEnabled = true;
+            cmbFilterValue.Hint = "Değer Seçin";
+            cmbFilterValue.IntegralHeight = false;
+            cmbFilterValue.ItemHeight = 43;
+            cmbFilterValue.Location = new Point(310, 25);
+            cmbFilterValue.MaxDropDownItems = 4;
+            cmbFilterValue.MouseState = MaterialSkin.MouseState.OUT;
+            cmbFilterValue.Name = "cmbFilterValue";
+            cmbFilterValue.Size = new Size(280, 49);
+            cmbFilterValue.StartIndex = -1;
+            cmbFilterValue.TabIndex = 36;
+            cmbFilterValue.Visible = false;
             // 
             // txtSingleNumber
             // 
-            this.txtSingleNumber.AnimateReadOnly = false;
-            this.txtSingleNumber.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.txtSingleNumber.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtSingleNumber.Depth = 0;
-            this.txtSingleNumber.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.txtSingleNumber.Hint = "Örn: 05551234567";
-            this.txtSingleNumber.LeadingIcon = null;
-            this.txtSingleNumber.Location = new System.Drawing.Point(310, 25);
-            this.txtSingleNumber.MaxLength = 15;
-            this.txtSingleNumber.MouseState = MaterialSkin.MouseState.OUT;
-            this.txtSingleNumber.Name = "txtSingleNumber";
-            this.txtSingleNumber.Size = new System.Drawing.Size(280, 48);
-            this.txtSingleNumber.TabIndex = 37;
-            this.txtSingleNumber.Text = "";
-            this.txtSingleNumber.TrailingIcon = null;
-            this.txtSingleNumber.Visible = false;
-
+            txtSingleNumber.AnimateReadOnly = false;
+            txtSingleNumber.BackgroundImageLayout = ImageLayout.None;
+            txtSingleNumber.CharacterCasing = CharacterCasing.Normal;
+            txtSingleNumber.Depth = 0;
+            txtSingleNumber.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Pixel);
+            txtSingleNumber.HideSelection = true;
+            txtSingleNumber.Hint = "Örn: 05551234567";
+            txtSingleNumber.LeadingIcon = null;
+            txtSingleNumber.Location = new Point(310, 25);
+            txtSingleNumber.MaxLength = 15;
+            txtSingleNumber.MouseState = MaterialSkin.MouseState.OUT;
+            txtSingleNumber.Name = "txtSingleNumber";
+            txtSingleNumber.PasswordChar = '\0';
+            txtSingleNumber.PrefixSuffixText = null;
+            txtSingleNumber.ReadOnly = false;
+            txtSingleNumber.RightToLeft = RightToLeft.No;
+            txtSingleNumber.SelectedText = "";
+            txtSingleNumber.SelectionLength = 0;
+            txtSingleNumber.SelectionStart = 0;
+            txtSingleNumber.ShortcutsEnabled = true;
+            txtSingleNumber.Size = new Size(280, 48);
+            txtSingleNumber.TabIndex = 37;
+            txtSingleNumber.TabStop = false;
+            txtSingleNumber.TextAlign = HorizontalAlignment.Left;
+            txtSingleNumber.TrailingIcon = null;
+            txtSingleNumber.UseSystemPasswordChar = false;
+            txtSingleNumber.Visible = false;
             // 
             // btnFilter
             // 
-            this.btnFilter.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnFilter.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnFilter.Depth = 0;
-            this.btnFilter.HighEmphasis = true;
-            this.btnFilter.Icon = null;
-            this.btnFilter.Location = new System.Drawing.Point(920, 30);
-            this.btnFilter.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnFilter.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnFilter.Name = "btnFilter";
-            this.btnFilter.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnFilter.Size = new System.Drawing.Size(145, 36);
-            this.btnFilter.TabIndex = 38;
-            this.btnFilter.Text = " 🔍 Filtrele ";
-            this.btnFilter.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            this.btnFilter.UseAccentColor = false;
-            this.btnFilter.UseVisualStyleBackColor = true;
-            this.btnFilter.Click += new System.EventHandler(this.BtnFilter_Click);
-
-            // ─── CONTENT AREA ───
-
-            // 
-            // lblFilteredCount
-            // 
-            this.lblFilteredCount.AutoSize = true;
-            this.lblFilteredCount.Depth = 0;
-            this.lblFilteredCount.Font = new System.Drawing.Font("Roboto Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-            this.lblFilteredCount.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
-            this.lblFilteredCount.ForeColor = System.Drawing.Color.FromArgb(211, 21, 21);
-            this.lblFilteredCount.Location = new System.Drawing.Point(15, 95);
-            this.lblFilteredCount.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblFilteredCount.Name = "lblFilteredCount";
-            this.lblFilteredCount.Size = new System.Drawing.Size(180, 17);
-            this.lblFilteredCount.TabIndex = 39;
-            this.lblFilteredCount.Text = "📋 Filtrelenen: 0 kayıt";
-
+            btnFilter.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnFilter.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnFilter.Depth = 0;
+            btnFilter.HighEmphasis = true;
+            btnFilter.Icon = null;
+            btnFilter.Location = new Point(920, 30);
+            btnFilter.Margin = new Padding(4, 6, 4, 6);
+            btnFilter.MouseState = MaterialSkin.MouseState.HOVER;
+            btnFilter.Name = "btnFilter";
+            btnFilter.NoAccentTextColor = Color.Empty;
+            btnFilter.Size = new Size(96, 36);
+            btnFilter.TabIndex = 38;
+            btnFilter.Text = " 🔍 Filtrele ";
+            btnFilter.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnFilter.UseAccentColor = false;
+            btnFilter.UseVisualStyleBackColor = true;
+            btnFilter.Click += BtnFilter_Click;
             // 
             // dgvFiltered
             // 
-            this.dgvFiltered.BackgroundColor = System.Drawing.Color.White;
-            this.dgvFiltered.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.dgvFiltered.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            System.Windows.Forms.DataGridViewCellStyle catHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
-            catHeaderStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            catHeaderStyle.BackColor = System.Drawing.Color.FromArgb(183, 28, 28);
-            catHeaderStyle.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            catHeaderStyle.ForeColor = System.Drawing.Color.White;
-            catHeaderStyle.SelectionBackColor = System.Drawing.Color.FromArgb(211, 47, 47);
-            catHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
-            catHeaderStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvFiltered.ColumnHeadersDefaultCellStyle = catHeaderStyle;
-            this.dgvFiltered.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvFiltered.EnableHeadersVisualStyles = false;
-            this.dgvFiltered.GridColor = System.Drawing.Color.FromArgb(230, 230, 230);
-            System.Windows.Forms.DataGridViewCellStyle catRowStyle = new System.Windows.Forms.DataGridViewCellStyle();
-            catRowStyle.BackColor = System.Drawing.Color.White;
-            catRowStyle.ForeColor = System.Drawing.Color.FromArgb(50, 50, 50);
-            catRowStyle.SelectionBackColor = System.Drawing.Color.FromArgb(255, 235, 238);
-            catRowStyle.SelectionForeColor = System.Drawing.Color.FromArgb(183, 28, 28);
-            catRowStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.dgvFiltered.DefaultCellStyle = catRowStyle;
-            System.Windows.Forms.DataGridViewCellStyle catAltRowStyle = new System.Windows.Forms.DataGridViewCellStyle();
-            catAltRowStyle.BackColor = System.Drawing.Color.FromArgb(248, 248, 252);
-            this.dgvFiltered.AlternatingRowsDefaultCellStyle = catAltRowStyle;
-            this.dgvFiltered.Location = new System.Drawing.Point(10, 115);
-            this.dgvFiltered.Name = "dgvFiltered";
-            this.dgvFiltered.RowTemplate.Height = 28;
-            this.dgvFiltered.Size = new System.Drawing.Size(645, 350);
-            this.dgvFiltered.TabIndex = 40;
-
-            // ─── RIGHT SIDE: MESSAGE + HELP + LOG ───
-
-            // 
-            // lblCatMessage
-            // 
-            this.lblCatMessage.AutoSize = true;
-            this.lblCatMessage.Depth = 0;
-            this.lblCatMessage.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-            this.lblCatMessage.Location = new System.Drawing.Point(670, 95);
-            this.lblCatMessage.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblCatMessage.Name = "lblCatMessage";
-            this.lblCatMessage.Size = new System.Drawing.Size(200, 19);
-            this.lblCatMessage.TabIndex = 41;
-            this.lblCatMessage.Text = "✏️ Gönderilecek Mesaj:";
-
-            // 
-            // txtCatMessage
-            // 
-            this.txtCatMessage.AnimateReadOnly = false;
-            this.txtCatMessage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.txtCatMessage.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtCatMessage.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtCatMessage.Depth = 0;
-            this.txtCatMessage.HideSelection = true;
-            this.txtCatMessage.Location = new System.Drawing.Point(670, 118);
-            this.txtCatMessage.MaxLength = 32767;
-            this.txtCatMessage.MouseState = MaterialSkin.MouseState.OUT;
-            this.txtCatMessage.Name = "txtCatMessage";
-            this.txtCatMessage.PasswordChar = '\0';
-            this.txtCatMessage.ReadOnly = false;
-            this.txtCatMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtCatMessage.SelectedText = "";
-            this.txtCatMessage.SelectionLength = 0;
-            this.txtCatMessage.SelectionStart = 0;
-            this.txtCatMessage.ShortcutsEnabled = true;
-            this.txtCatMessage.Size = new System.Drawing.Size(488, 120);
-            this.txtCatMessage.TabIndex = 42;
-            this.txtCatMessage.TabStop = false;
-            this.txtCatMessage.Text = "Sayın {İsim}, {Plaka} plakalı aracınızın trafik sigortası bitmektedir. En uygun teklifimiz {EnUygunSirket} firmasından {EnUygunFiyat} fiyatıdır.";
-            this.txtCatMessage.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.txtCatMessage.UseSystemPasswordChar = false;
-
-            // 
-            // btnCatAttachment
-            // 
-            this.btnCatAttachment.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnCatAttachment.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnCatAttachment.Depth = 0;
-            this.btnCatAttachment.HighEmphasis = true;
-            this.btnCatAttachment.Icon = null;
-            this.btnCatAttachment.Location = new System.Drawing.Point(670, 245);
-            this.btnCatAttachment.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnCatAttachment.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnCatAttachment.Name = "btnCatAttachment";
-            this.btnCatAttachment.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnCatAttachment.Size = new System.Drawing.Size(130, 36);
-            this.btnCatAttachment.TabIndex = 43;
-            this.btnCatAttachment.Text = " 📎 Görsel Seç ";
-            this.btnCatAttachment.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined;
-            this.btnCatAttachment.UseAccentColor = false;
-            this.btnCatAttachment.UseVisualStyleBackColor = true;
-            this.btnCatAttachment.Click += new System.EventHandler(this.BtnCatAttachment_Click);
-
-            // 
-            // btnRemoveCatAttachment
-            // 
-            this.btnRemoveCatAttachment.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnRemoveCatAttachment.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnRemoveCatAttachment.Depth = 0;
-            this.btnRemoveCatAttachment.HighEmphasis = true;
-            this.btnRemoveCatAttachment.Icon = null;
-            this.btnRemoveCatAttachment.Location = new System.Drawing.Point(810, 245);
-            this.btnRemoveCatAttachment.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnRemoveCatAttachment.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnRemoveCatAttachment.Name = "btnRemoveCatAttachment";
-            this.btnRemoveCatAttachment.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnRemoveCatAttachment.Size = new System.Drawing.Size(70, 36);
-            this.btnRemoveCatAttachment.TabIndex = 53;
-            this.btnRemoveCatAttachment.Text = " Kaldır ";
-            this.btnRemoveCatAttachment.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            this.btnRemoveCatAttachment.UseAccentColor = true;
-            this.btnRemoveCatAttachment.UseVisualStyleBackColor = true;
-            this.btnRemoveCatAttachment.Visible = false;
-            this.btnRemoveCatAttachment.Click += new System.EventHandler(this.BtnRemoveCatAttachment_Click);
-
-            // 
-            // lblCatAttachment
-            // 
-            this.lblCatAttachment.AutoSize = true;
-            this.lblCatAttachment.Depth = 0;
-            this.lblCatAttachment.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblCatAttachment.AutoEllipsis = true;
-            this.lblCatAttachment.Location = new System.Drawing.Point(890, 253);
-            this.lblCatAttachment.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblCatAttachment.Name = "lblCatAttachment";
-            this.lblCatAttachment.Size = new System.Drawing.Size(126, 19);
-            this.lblCatAttachment.TabIndex = 44;
-            this.lblCatAttachment.Text = "Dosya Seçilmedi.";
-
-            // 
-            // rtbHelp - PARAMETRELERİ AÇIKLAYAN YARDIM PANELİ
-            // 
-            this.rtbHelp.BackColor = System.Drawing.Color.FromArgb(255, 253, 231);
-            this.rtbHelp.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.rtbHelp.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.rtbHelp.ForeColor = System.Drawing.Color.FromArgb(60, 60, 60);
-            this.rtbHelp.Location = new System.Drawing.Point(670, 290);
-            this.rtbHelp.Name = "rtbHelp";
-            this.rtbHelp.ReadOnly = true;
-            this.rtbHelp.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.rtbHelp.Size = new System.Drawing.Size(488, 130);
-            this.rtbHelp.TabIndex = 51;
-            this.rtbHelp.Text = "💡 KULLANILABILIR PARAMETRELER (Süslü parantez ile yazın)\n\n" +
-                "  {İsim}  → Müşteri adı/soyadı\n" +
-                "  {Plaka}  → Araç plakası\n" +
-                "  {Sigorta Tar}  → Sigorta bitiş tarihi\n" +
-                "  {Türü}  → Poliçe türü (Trafik, Dask, Kasko)\n" +
-                "  {Marka}  → Araç markası\n" +
-                "  {TC / VRG}  → TC veya Vergi No\n" +
-                "  {Belge No}  → Belge numarası\n" +
-                "  {Durum}  → Poliçe durumu\n" +
-                "  {Şirket}  → Sigorta şirketi\n" +
-                "  {Teklif No}  → Teklif numarası\n\n" +
-                "📊 OTOMATİK HESAPLANAN:\n" +
-                "  {EnUygunFiyat}  → En düşük teklif fiyatı\n" +
-                "  {EnUygunSirket}  → En düşük fiyatı veren şirket\n" +
-                "  {EnUygunTeklif}  → Şirket: Fiyat formatında\n" +
-                "  {Teklifler}  → Tüm teklifler listesi\n\n" +
-                "📋 KATEGORİLER:\n" +
-                "  📅 Sigorta Tarihi → Tarih aralığındaki poliçeleri filtreler\n" +
-                "  📊 Durum → KESİLDİ, SATILMIŞ, YENİLENMEMİŞ vb.\n" +
-                "  🏢 Şirket → Mapfre, Quick, Anadolu vb.\n" +
-                "  📁 Türü → Trafik, Dask, Kasko\n" +
-                "  📱 Tek Numara → Direkt bir numaraya mesaj atar";
-
-            // ─── BOTTOM LEFT: ACTION BUTTONS ───
-
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(248, 248, 252);
+            dgvFiltered.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dgvFiltered.BackgroundColor = Color.White;
+            dgvFiltered.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.FromArgb(183, 28, 28);
+            dataGridViewCellStyle3.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            dataGridViewCellStyle3.ForeColor = Color.White;
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(211, 47, 47);
+            dataGridViewCellStyle3.SelectionForeColor = Color.White;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dgvFiltered.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dgvFiltered.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = Color.White;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle4.ForeColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(255, 235, 238);
+            dataGridViewCellStyle4.SelectionForeColor = Color.FromArgb(183, 28, 28);
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            dgvFiltered.DefaultCellStyle = dataGridViewCellStyle4;
+            dgvFiltered.EnableHeadersVisualStyles = false;
+            dgvFiltered.GridColor = Color.FromArgb(230, 230, 230);
+            dgvFiltered.Location = new Point(10, 115);
+            dgvFiltered.Name = "dgvFiltered";
+            dgvFiltered.RowTemplate.Height = 28;
+            dgvFiltered.Size = new Size(645, 350);
+            dgvFiltered.TabIndex = 40;
             // 
             // btnSendFiltered
             // 
-            this.btnSendFiltered.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnSendFiltered.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnSendFiltered.Depth = 0;
-            this.btnSendFiltered.HighEmphasis = true;
-            this.btnSendFiltered.Icon = null;
-            this.btnSendFiltered.Location = new System.Drawing.Point(10, 475);
-            this.btnSendFiltered.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnSendFiltered.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnSendFiltered.Name = "btnSendFiltered";
-            this.btnSendFiltered.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnSendFiltered.Size = new System.Drawing.Size(280, 36);
-            this.btnSendFiltered.TabIndex = 45;
-            this.btnSendFiltered.Text = " 🚀 Filtrelenen Listeye Gönder ";
-            this.btnSendFiltered.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            this.btnSendFiltered.UseAccentColor = false;
-            this.btnSendFiltered.UseVisualStyleBackColor = true;
-            this.btnSendFiltered.Click += new System.EventHandler(this.BtnSendFiltered_Click);
-
+            btnSendFiltered.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnSendFiltered.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnSendFiltered.Depth = 0;
+            btnSendFiltered.HighEmphasis = true;
+            btnSendFiltered.Icon = null;
+            btnSendFiltered.Location = new Point(10, 475);
+            btnSendFiltered.Margin = new Padding(4, 6, 4, 6);
+            btnSendFiltered.MouseState = MaterialSkin.MouseState.HOVER;
+            btnSendFiltered.Name = "btnSendFiltered";
+            btnSendFiltered.NoAccentTextColor = Color.Empty;
+            btnSendFiltered.Size = new Size(247, 36);
+            btnSendFiltered.TabIndex = 45;
+            btnSendFiltered.Text = " 🚀 Filtrelenen Listeye Gönder ";
+            btnSendFiltered.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnSendFiltered.UseAccentColor = false;
+            btnSendFiltered.UseVisualStyleBackColor = true;
+            btnSendFiltered.Click += BtnSendFiltered_Click;
             // 
             // btnStopCat
             // 
-            this.btnStopCat.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnStopCat.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            this.btnStopCat.Depth = 0;
-            this.btnStopCat.HighEmphasis = true;
-            this.btnStopCat.Icon = null;
-            this.btnStopCat.Location = new System.Drawing.Point(305, 475);
-            this.btnStopCat.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnStopCat.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnStopCat.Name = "btnStopCat";
-            this.btnStopCat.NoAccentTextColor = System.Drawing.Color.Empty;
-            this.btnStopCat.Size = new System.Drawing.Size(130, 36);
-            this.btnStopCat.TabIndex = 52;
-            this.btnStopCat.Text = " ⏹ Durdur ";
-            this.btnStopCat.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            this.btnStopCat.UseAccentColor = true;
-            this.btnStopCat.UseVisualStyleBackColor = true;
-            this.btnStopCat.Click += new System.EventHandler(this.BtnStopCat_Click);
-            this.btnStopCat.Enabled = false;
-
-            // ─── BOTTOM: LOG + STATUS ───
-
+            btnStopCat.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnStopCat.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnStopCat.Depth = 0;
+            btnStopCat.Enabled = false;
+            btnStopCat.HighEmphasis = true;
+            btnStopCat.Icon = null;
+            btnStopCat.Location = new Point(305, 475);
+            btnStopCat.Margin = new Padding(4, 6, 4, 6);
+            btnStopCat.MouseState = MaterialSkin.MouseState.HOVER;
+            btnStopCat.Name = "btnStopCat";
+            btnStopCat.NoAccentTextColor = Color.Empty;
+            btnStopCat.Size = new Size(98, 36);
+            btnStopCat.TabIndex = 52;
+            btnStopCat.Text = " ⏹ Durdur ";
+            btnStopCat.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnStopCat.UseAccentColor = true;
+            btnStopCat.UseVisualStyleBackColor = true;
+            btnStopCat.Click += BtnStopCat_Click;
+            // 
+            // btnRemoveCatAttachment
+            // 
+            btnRemoveCatAttachment.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnRemoveCatAttachment.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnRemoveCatAttachment.Depth = 0;
+            btnRemoveCatAttachment.HighEmphasis = true;
+            btnRemoveCatAttachment.Icon = null;
+            btnRemoveCatAttachment.Location = new Point(810, 245);
+            btnRemoveCatAttachment.Margin = new Padding(4, 6, 4, 6);
+            btnRemoveCatAttachment.MouseState = MaterialSkin.MouseState.HOVER;
+            btnRemoveCatAttachment.Name = "btnRemoveCatAttachment";
+            btnRemoveCatAttachment.NoAccentTextColor = Color.Empty;
+            btnRemoveCatAttachment.Size = new Size(75, 36);
+            btnRemoveCatAttachment.TabIndex = 53;
+            btnRemoveCatAttachment.Text = " Kaldır ";
+            btnRemoveCatAttachment.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnRemoveCatAttachment.UseAccentColor = true;
+            btnRemoveCatAttachment.UseVisualStyleBackColor = true;
+            btnRemoveCatAttachment.Visible = false;
+            btnRemoveCatAttachment.Click += BtnRemoveCatAttachment_Click;
+            // 
+            // lblFilteredCount
+            // 
+            lblFilteredCount.AutoSize = true;
+            lblFilteredCount.Depth = 0;
+            lblFilteredCount.Font = new Font("Roboto Medium", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            lblFilteredCount.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
+            lblFilteredCount.ForeColor = Color.FromArgb(211, 21, 21);
+            lblFilteredCount.Location = new Point(15, 95);
+            lblFilteredCount.MouseState = MaterialSkin.MouseState.HOVER;
+            lblFilteredCount.Name = "lblFilteredCount";
+            lblFilteredCount.Size = new Size(135, 17);
+            lblFilteredCount.TabIndex = 39;
+            lblFilteredCount.Text = "📋 Filtrelenen: 0 kayıt";
+            // 
+            // lblCatMessage
+            // 
+            lblCatMessage.AutoSize = true;
+            lblCatMessage.Depth = 0;
+            lblCatMessage.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            lblCatMessage.Location = new Point(670, 95);
+            lblCatMessage.MouseState = MaterialSkin.MouseState.HOVER;
+            lblCatMessage.Name = "lblCatMessage";
+            lblCatMessage.Size = new Size(163, 19);
+            lblCatMessage.TabIndex = 41;
+            lblCatMessage.Text = "✏️ Gönderilecek Mesaj:";
+            // 
+            // txtCatMessage
+            // 
+            txtCatMessage.AnimateReadOnly = false;
+            txtCatMessage.BackgroundImageLayout = ImageLayout.None;
+            txtCatMessage.CharacterCasing = CharacterCasing.Normal;
+            txtCatMessage.Cursor = Cursors.IBeam;
+            txtCatMessage.Depth = 0;
+            txtCatMessage.HideSelection = true;
+            txtCatMessage.Location = new Point(670, 118);
+            txtCatMessage.MaxLength = 32767;
+            txtCatMessage.MouseState = MaterialSkin.MouseState.OUT;
+            txtCatMessage.Name = "txtCatMessage";
+            txtCatMessage.PasswordChar = '\0';
+            txtCatMessage.ReadOnly = false;
+            txtCatMessage.ScrollBars = ScrollBars.Vertical;
+            txtCatMessage.SelectedText = "";
+            txtCatMessage.SelectionLength = 0;
+            txtCatMessage.SelectionStart = 0;
+            txtCatMessage.ShortcutsEnabled = true;
+            txtCatMessage.Size = new Size(488, 120);
+            txtCatMessage.TabIndex = 42;
+            txtCatMessage.TabStop = false;
+            txtCatMessage.Text = "Sayın {İsim}, {Plaka} plakalı aracınızın trafik sigortası bitmektedir. En uygun teklifimiz {EnUygunSirket} firmasından {EnUygunFiyat} fiyatıdır.";
+            txtCatMessage.TextAlign = HorizontalAlignment.Left;
+            txtCatMessage.UseSystemPasswordChar = false;
+            // 
+            // btnCatAttachment
+            // 
+            btnCatAttachment.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnCatAttachment.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnCatAttachment.Depth = 0;
+            btnCatAttachment.HighEmphasis = true;
+            btnCatAttachment.Icon = null;
+            btnCatAttachment.Location = new Point(670, 245);
+            btnCatAttachment.Margin = new Padding(4, 6, 4, 6);
+            btnCatAttachment.MouseState = MaterialSkin.MouseState.HOVER;
+            btnCatAttachment.Name = "btnCatAttachment";
+            btnCatAttachment.NoAccentTextColor = Color.Empty;
+            btnCatAttachment.Size = new Size(120, 36);
+            btnCatAttachment.TabIndex = 43;
+            btnCatAttachment.Text = " 📎 Görsel Seç ";
+            btnCatAttachment.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined;
+            btnCatAttachment.UseAccentColor = false;
+            btnCatAttachment.UseVisualStyleBackColor = true;
+            btnCatAttachment.Click += BtnCatAttachment_Click;
+            // 
+            // lblCatAttachment
+            // 
+            lblCatAttachment.AutoEllipsis = true;
+            lblCatAttachment.AutoSize = true;
+            lblCatAttachment.Depth = 0;
+            lblCatAttachment.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            lblCatAttachment.Location = new Point(890, 253);
+            lblCatAttachment.MouseState = MaterialSkin.MouseState.HOVER;
+            lblCatAttachment.Name = "lblCatAttachment";
+            lblCatAttachment.Size = new Size(123, 19);
+            lblCatAttachment.TabIndex = 44;
+            lblCatAttachment.Text = "Dosya Seçilmedi.";
+            // 
+            // rtbHelp
+            // 
+            rtbHelp.BackColor = Color.FromArgb(255, 253, 231);
+            rtbHelp.BorderStyle = BorderStyle.FixedSingle;
+            rtbHelp.Font = new Font("Segoe UI", 9F);
+            rtbHelp.ForeColor = Color.FromArgb(60, 60, 60);
+            rtbHelp.Location = new Point(670, 290);
+            rtbHelp.Name = "rtbHelp";
+            rtbHelp.ReadOnly = true;
+            rtbHelp.ScrollBars = RichTextBoxScrollBars.Vertical;
+            rtbHelp.Size = new Size(488, 130);
+            rtbHelp.TabIndex = 51;
+            rtbHelp.Text = resources.GetString("rtbHelp.Text");
             // 
             // rtbCatLog
             // 
-            this.rtbCatLog.BackColor = System.Drawing.Color.FromArgb(30, 30, 35);
-            this.rtbCatLog.Font = new System.Drawing.Font("Cascadia Code", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.rtbCatLog.ForeColor = System.Drawing.Color.FromArgb(100, 255, 100);
-            this.rtbCatLog.Location = new System.Drawing.Point(670, 430);
-            this.rtbCatLog.Name = "rtbCatLog";
-            this.rtbCatLog.ReadOnly = true;
-            this.rtbCatLog.Size = new System.Drawing.Size(488, 150);
-            this.rtbCatLog.TabIndex = 46;
-            this.rtbCatLog.Text = "";
-
+            rtbCatLog.BackColor = Color.FromArgb(30, 30, 35);
+            rtbCatLog.Font = new Font("Cascadia Code", 9.5F);
+            rtbCatLog.ForeColor = Color.FromArgb(100, 255, 100);
+            rtbCatLog.Location = new Point(670, 430);
+            rtbCatLog.Name = "rtbCatLog";
+            rtbCatLog.ReadOnly = true;
+            rtbCatLog.Size = new Size(488, 150);
+            rtbCatLog.TabIndex = 46;
+            rtbCatLog.Text = "";
             // 
             // progressBarCat
             // 
-            this.progressBarCat.Depth = 0;
-            this.progressBarCat.Location = new System.Drawing.Point(10, 590);
-            this.progressBarCat.MouseState = MaterialSkin.MouseState.HOVER;
-            this.progressBarCat.Name = "progressBarCat";
-            this.progressBarCat.Size = new System.Drawing.Size(1148, 5);
-            this.progressBarCat.TabIndex = 47;
-
+            progressBarCat.Depth = 0;
+            progressBarCat.Location = new Point(10, 590);
+            progressBarCat.MouseState = MaterialSkin.MouseState.HOVER;
+            progressBarCat.Name = "progressBarCat";
+            progressBarCat.Size = new Size(1148, 5);
+            progressBarCat.TabIndex = 47;
             // 
             // lblCatStatus
             // 
-            this.lblCatStatus.AutoSize = true;
-            this.lblCatStatus.Depth = 0;
-            this.lblCatStatus.Font = new System.Drawing.Font("Roboto Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-            this.lblCatStatus.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
-            this.lblCatStatus.Location = new System.Drawing.Point(10, 598);
-            this.lblCatStatus.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblCatStatus.Name = "lblCatStatus";
-            this.lblCatStatus.Size = new System.Drawing.Size(121, 17);
-            this.lblCatStatus.TabIndex = 48;
-            this.lblCatStatus.Text = "Durum: Hazır.";
-
+            lblCatStatus.AutoSize = true;
+            lblCatStatus.Depth = 0;
+            lblCatStatus.Font = new Font("Roboto Medium", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            lblCatStatus.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
+            lblCatStatus.Location = new Point(10, 598);
+            lblCatStatus.MouseState = MaterialSkin.MouseState.HOVER;
+            lblCatStatus.Name = "lblCatStatus";
+            lblCatStatus.Size = new Size(88, 17);
+            lblCatStatus.TabIndex = 48;
+            lblCatStatus.Text = "Durum: Hazır.";
+            // 
+            // tabDashboard
+            // 
+            tabDashboard.BackColor = Color.White;
+            tabDashboard.Controls.Add(lblTotal);
+            tabDashboard.Controls.Add(lblPending);
+            tabDashboard.Controls.Add(lblSuccess);
+            tabDashboard.Controls.Add(lblFailed);
+            tabDashboard.Location = new Point(4, 24);
+            tabDashboard.Name = "tabDashboard";
+            tabDashboard.Padding = new Padding(3);
+            tabDashboard.Size = new Size(1220, 734);
+            tabDashboard.TabIndex = 1;
+            tabDashboard.Text = "Canlı İstatistikler";
+            // 
+            // lblTotal
+            // 
+            lblTotal.AutoSize = true;
+            lblTotal.Depth = 0;
+            lblTotal.Font = new Font("Roboto", 34F, FontStyle.Bold, GraphicsUnit.Pixel);
+            lblTotal.FontType = MaterialSkin.MaterialSkinManager.fontType.H4;
+            lblTotal.Location = new Point(60, 60);
+            lblTotal.MouseState = MaterialSkin.MouseState.HOVER;
+            lblTotal.Name = "lblTotal";
+            lblTotal.Size = new Size(297, 41);
+            lblTotal.TabIndex = 0;
+            lblTotal.Text = "Toplam Yüklenen: 0";
+            // 
+            // lblPending
+            // 
+            lblPending.AutoSize = true;
+            lblPending.Depth = 0;
+            lblPending.Font = new Font("Roboto", 34F, FontStyle.Bold, GraphicsUnit.Pixel);
+            lblPending.FontType = MaterialSkin.MaterialSkinManager.fontType.H4;
+            lblPending.Location = new Point(60, 150);
+            lblPending.MouseState = MaterialSkin.MouseState.HOVER;
+            lblPending.Name = "lblPending";
+            lblPending.Size = new Size(171, 41);
+            lblPending.TabIndex = 1;
+            lblPending.Text = "Bekleyen: 0";
+            // 
+            // lblSuccess
+            // 
+            lblSuccess.AutoSize = true;
+            lblSuccess.Depth = 0;
+            lblSuccess.Font = new Font("Roboto", 34F, FontStyle.Bold, GraphicsUnit.Pixel);
+            lblSuccess.FontType = MaterialSkin.MaterialSkinManager.fontType.H4;
+            lblSuccess.ForeColor = Color.Green;
+            lblSuccess.Location = new Point(60, 240);
+            lblSuccess.MouseState = MaterialSkin.MouseState.HOVER;
+            lblSuccess.Name = "lblSuccess";
+            lblSuccess.Size = new Size(149, 41);
+            lblSuccess.TabIndex = 2;
+            lblSuccess.Text = "Başarılı: 0";
+            // 
+            // lblFailed
+            // 
+            lblFailed.AutoSize = true;
+            lblFailed.Depth = 0;
+            lblFailed.Font = new Font("Roboto", 34F, FontStyle.Bold, GraphicsUnit.Pixel);
+            lblFailed.FontType = MaterialSkin.MaterialSkinManager.fontType.H4;
+            lblFailed.ForeColor = Color.Red;
+            lblFailed.Location = new Point(60, 330);
+            lblFailed.MouseState = MaterialSkin.MouseState.HOVER;
+            lblFailed.Name = "lblFailed";
+            lblFailed.Size = new Size(125, 41);
+            lblFailed.TabIndex = 3;
+            lblFailed.Text = "Hatalı: 0";
+            // 
+            // picLogo
+            // 
+            picLogo.Image = (Image)resources.GetObject("picLogo.Image");
+            picLogo.Location = new Point(12, 70);
+            picLogo.Name = "picLogo";
+            picLogo.Size = new Size(200, 65);
+            picLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            picLogo.TabIndex = 0;
+            picLogo.TabStop = false;
+            // 
+            // tmrSchedule
+            // 
+            tmrSchedule.Interval = 1000;
+            tmrSchedule.Tick += TmrSchedule_Tick;
+            // 
+            // lblCategoryTitle
+            // 
+            lblCategoryTitle.AutoSize = true;
+            lblCategoryTitle.Depth = 0;
+            lblCategoryTitle.Font = new Font("Microsoft Sans Serif", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            lblCategoryTitle.Location = new Point(10, 5);
+            lblCategoryTitle.MouseState = MaterialSkin.MouseState.HOVER;
+            lblCategoryTitle.Name = "lblCategoryTitle";
+            lblCategoryTitle.Size = new Size(150, 19);
+            lblCategoryTitle.TabIndex = 30;
+            lblCategoryTitle.Text = "📋 Filtre Kategorisi:";
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1200, 800);
-            this.Controls.Add(this.picLogo);
-            this.Controls.Add(this.tabControl);
-            this.DrawerShowIconsWhenHidden = true;
-            this.DrawerTabControl = this.tabControl;
-            this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "İncir Sigorta - WhatsApp Otomasyonu (CRM)";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            
-            this.tabControl.ResumeLayout(false);
-            this.tabGönderim.ResumeLayout(false);
-            this.tabGönderim.PerformLayout();
-            this.tabKategori.ResumeLayout(false);
-            this.tabKategori.PerformLayout();
-            this.tabDashboard.ResumeLayout(false);
-            this.tabDashboard.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvNumbers)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvFiltered)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1264, 956);
+            Controls.Add(picLogo);
+            Controls.Add(tabControl);
+            DrawerShowIconsWhenHidden = true;
+            DrawerTabControl = tabControl;
+            Font = new Font("Segoe UI", 9.75F);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "İncir Sigorta - WhatsApp Otomasyonu (CRM)";
+            FormClosing += MainForm_FormClosing;
+            tabControl.ResumeLayout(false);
+            tabGönderim.ResumeLayout(false);
+            tabGönderim.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvNumbers).EndInit();
+            tabKategori.ResumeLayout(false);
+            tabKategori.PerformLayout();
+            pnlFilterBar.ResumeLayout(false);
+            pnlFilterBar.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvFiltered).EndInit();
+            tabDashboard.ResumeLayout(false);
+            tabDashboard.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picLogo).EndInit();
+            ResumeLayout(false);
         }
 
         private MaterialSkin.Controls.MaterialTabControl tabControl;
@@ -1110,6 +1080,8 @@ namespace AcentemOto.Forms
         private MaterialSkin.Controls.MaterialButton btnStartSending;
         private MaterialSkin.Controls.MaterialButton btnStop;
         private MaterialSkin.Controls.MaterialCheckbox chkHeadless;
+        private MaterialSkin.Controls.MaterialComboBox cmbSpeed;
+        private MaterialSkin.Controls.MaterialCheckbox chkHash;
         
         private MaterialSkin.Controls.MaterialButton btnAttachment;
         private MaterialSkin.Controls.MaterialLabel lblAttachment;

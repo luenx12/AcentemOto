@@ -18,6 +18,7 @@ namespace AcentemOto.Services
     {
         private IWebDriver? _driver;
         private readonly AntiSpamEngine _antiSpamEngine;
+        public AntiSpamEngine AntiSpam => _antiSpamEngine;
         private readonly IMessageLogRepository _repository;
         private bool _isDisposed = false;
 

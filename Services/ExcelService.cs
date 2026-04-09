@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ExcelDataReader;
 
 namespace AcentemOto.Services
 {
@@ -25,151 +26,194 @@ namespace AcentemOto.Services
                 if (!File.Exists(filePath))
                     throw new FileNotFoundException("Excel dosyası bulunamadı.");
 
-                using (var package = string.IsNullOrEmpty(password)
-                    ? new ExcelPackage(new FileInfo(filePath))
-                    : new ExcelPackage(new FileInfo(filePath), password))
+                List<List<string>> grid = new List<List<string>>();
+
+                try
                 {
-                    var worksheet = package.Workbook.Worksheets[0];
-                    if (worksheet.Dimension == null) return messageLogs;
-
-                    int rowCount = worksheet.Dimension.Rows;
-                    int colCount = worksheet.Dimension.Columns;
-
-                    // Determine headers and phone column
-                    int phoneColIndex = 1;
-                    var headers = new Dictionary<int, string>();
-                    bool hasHeaders = false;
-
-                    // Check if first row looks like headers (string values)
-                    for (int c = 1; c <= colCount; c++)
+                    using (var package = string.IsNullOrEmpty(password)
+                        ? new ExcelPackage(new FileInfo(filePath))
+                        : new ExcelPackage(new FileInfo(filePath), password))
                     {
-                        var cellValue = worksheet.Cells[1, c].Text?.Trim();
-                        if (!string.IsNullOrEmpty(cellValue))
+                        var worksheet = package.Workbook.Worksheets[0];
+                        if (worksheet.Dimension != null)
                         {
-                            headers[c] = cellValue;
-                            hasHeaders = true;
-                            if (cellValue.Equals("Telefon", StringComparison.OrdinalIgnoreCase) ||
-                                cellValue.Equals("Numara", StringComparison.OrdinalIgnoreCase) ||
-                                cellValue.Equals("Phone", StringComparison.OrdinalIgnoreCase) ||
-                                cellValue.Contains("Referans / Telefon", StringComparison.OrdinalIgnoreCase) ||
-                                cellValue.Contains("Referans", StringComparison.OrdinalIgnoreCase))
+                            int rCount = worksheet.Dimension.Rows;
+                            int cCount = worksheet.Dimension.Columns;
+                            for (int r = 1; r <= rCount; r++)
                             {
-                                phoneColIndex = c;
+                                var rowObj = new List<string>();
+                                for (int c = 1; c <= cCount; c++)
+                                {
+                                    rowObj.Add(worksheet.Cells[r, c].Text?.Trim() ?? "");
+                                }
+                                grid.Add(rowObj);
                             }
                         }
                     }
-
-                    int startRow = hasHeaders ? 2 : 1;
-                    int consecutiveEmptyRows = 0;
-
-                    for (int row = startRow; row <= rowCount; row++)
+                }
+                catch (Exception ex)
+                {
+                    if (string.IsNullOrEmpty(password))
                     {
-                        var phoneValue = worksheet.Cells[row, phoneColIndex].Text?.Trim();
-                        if (string.IsNullOrWhiteSpace(phoneValue)) 
+                        throw; // Parola verilmediyse (örneğin ilk deneme) exception UI'a gitsin ki şifre istesin
+                    }
+                    
+                    // EPPlus şifre olmasına rağmen patladıysa ExcelDataReader'a geç (Daha kapsamlı şifreleme tiplerini destekler)
+                    System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                    using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        var conf = new ExcelDataReader.ExcelReaderConfiguration() { Password = password };
+                        try
                         {
-                            consecutiveEmptyRows++;
-                            if (consecutiveEmptyRows > 10) break; // Çok fazla boş satır gelirse dosyayı sonlandır (performans için)
-                            continue;
-                        }
-                        
-                        consecutiveEmptyRows = 0;
-
-                        string formattedNumber = phoneValue.FormatTurkishPhone();
-                        if (!string.IsNullOrEmpty(formattedNumber))
-                        {
-                            var log = new MessageLog
+                            using (var reader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream, conf))
                             {
-                                PhoneNumber = formattedNumber,
-                                Status = MessageStatus.Pending
-                            };
-
-                            // Add other columns as parameters
-                            var offerList = new List<string>();
-                            decimal minPrice = decimal.MaxValue;
-                            string minCompany = "";
-                            string rawMinPriceStr = "";
-
-                            // Kesinlikle teklif kolonu OLMAYAN başlıklar (exact match ve contains için ayrı listeler)
-                            var excludedExact = new[] { "S.N", "S.No", "Sıra", "Ad", "Soyad", "TC", "VKN", "Yıl" };
-                            var excludedContains = new[] { "Tarih", "tarih", "İsim", "isim", "Tür", "Plaka", "Belge", "Marka", "Referans", "Telefon", "Tel", "Durum", "Teklif No", "Teklif", "Şirket", "Sirket", "TC/VRG", "VRG" };
-
-                            for (int c = 1; c <= colCount; c++)
-                            {
-                                if (c == phoneColIndex) continue;
-
-                                string headerKey = headers.ContainsKey(c) ? headers[c] : $"Sütun_{c}";
-                                string cellValue = worksheet.Cells[row, c].Text?.Trim() ?? "";
-                                log.Parameters[headerKey] = cellValue;
-
-                                // Akıllı Teklif Çıkarımı
-                                if (!string.IsNullOrWhiteSpace(cellValue))
+                                var dataSet = reader.AsDataSet();
+                                var table = dataSet.Tables[0];
+                                for (int r = 0; r < table.Rows.Count; r++)
                                 {
-                                    // Önce exact match kontrolü
-                                    bool isExcluded = excludedExact.Any(eh => headerKey.Equals(eh, StringComparison.OrdinalIgnoreCase));
-                                    // Sonra contains kontrolü
-                                    if (!isExcluded)
+                                    var rowObj = new List<string>();
+                                    for (int c = 0; c < table.Columns.Count; c++)
                                     {
-                                        isExcluded = excludedContains.Any(eh => headerKey.IndexOf(eh, StringComparison.OrdinalIgnoreCase) >= 0);
+                                        rowObj.Add(table.Rows[r][c]?.ToString()?.Trim() ?? "");
                                     }
+                                    grid.Add(rowObj);
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            throw new Exception("Şifre hatalı veya Excel formatı okunamadı.");
+                        }
+                    }
+                }
 
-                                    if (!isExcluded)
+                if (grid.Count == 0) return messageLogs;
+
+                int rowCount = grid.Count;
+                int colCount = grid[0].Count;
+
+                int phoneColIndex = 0;
+                var headers = new Dictionary<int, string>();
+                bool hasHeaders = false;
+
+                for (int c = 0; c < colCount; c++)
+                {
+                    var cellValue = grid[0][c];
+                    if (!string.IsNullOrEmpty(cellValue))
+                    {
+                        headers[c] = cellValue;
+                        hasHeaders = true;
+                        if (cellValue.Equals("Telefon", StringComparison.OrdinalIgnoreCase) ||
+                            cellValue.Equals("Numara", StringComparison.OrdinalIgnoreCase) ||
+                            cellValue.Equals("Phone", StringComparison.OrdinalIgnoreCase) ||
+                            cellValue.Contains("Referans / Telefon", StringComparison.OrdinalIgnoreCase) ||
+                            cellValue.Contains("Referans", StringComparison.OrdinalIgnoreCase))
+                        {
+                            phoneColIndex = c;
+                        }
+                    }
+                }
+
+                int startRow = hasHeaders ? 1 : 0;
+                int consecutiveEmptyRows = 0;
+
+                for (int row = startRow; row < rowCount; row++)
+                {
+                    var phoneValue = grid[row][phoneColIndex];
+                    if (string.IsNullOrWhiteSpace(phoneValue)) 
+                    {
+                        consecutiveEmptyRows++;
+                        if (consecutiveEmptyRows > 10) break; 
+                        continue;
+                    }
+                    
+                    consecutiveEmptyRows = 0;
+
+                    string formattedNumber = phoneValue.FormatTurkishPhone();
+                    if (!string.IsNullOrEmpty(formattedNumber))
+                    {
+                        var log = new MessageLog
+                        {
+                            PhoneNumber = formattedNumber,
+                            Status = MessageStatus.Pending
+                        };
+
+                        var offerList = new List<string>();
+                        decimal minPrice = decimal.MaxValue;
+                        string minCompany = "";
+                        string rawMinPriceStr = "";
+
+                        var excludedExact = new[] { "S.N", "S.No", "Sıra", "Ad", "Soyad", "TC", "VKN", "Yıl" };
+                        var excludedContains = new[] { "Tarih", "tarih", "İsim", "isim", "Tür", "Plaka", "Belge", "Marka", "Referans", "Telefon", "Tel", "Durum", "Teklif No", "Teklif", "Şirket", "Sirket", "TC/VRG", "VRG" };
+
+                        for (int c = 0; c < colCount; c++)
+                        {
+                            if (c == phoneColIndex) continue;
+
+                            string headerKey = headers.ContainsKey(c) ? headers[c] : $"Sütun_{c}";
+                            string cellValue = grid[row][c];
+                            log.Parameters[headerKey] = cellValue;
+
+                            if (!string.IsNullOrWhiteSpace(cellValue))
+                            {
+                                bool isExcluded = excludedExact.Any(eh => headerKey.Equals(eh, StringComparison.OrdinalIgnoreCase));
+                                if (!isExcluded)
+                                {
+                                    isExcluded = excludedContains.Any(eh => headerKey.IndexOf(eh, StringComparison.OrdinalIgnoreCase) >= 0);
+                                }
+
+                                if (!isExcluded)
+                                {
+                                    string cleanValue = cellValue
+                                        .Replace("₺", "")
+                                        .Replace("TL", "")
+                                        .Replace("tl", "")
+                                        .Replace(" ", "")
+                                        .Trim();
+                                    cleanValue = new string(cleanValue.Where(ch => char.IsDigit(ch) || ch == ',' || ch == '.').ToArray());
+
+                                    if (decimal.TryParse(cleanValue, System.Globalization.NumberStyles.Any, new System.Globalization.CultureInfo("tr-TR"), out decimal price))
                                     {
-                                        // ₺, TL, boşluk ve diğer karakter temizliği
-                                        string cleanValue = cellValue
-                                            .Replace("₺", "")
-                                            .Replace("TL", "")
-                                            .Replace("tl", "")
-                                            .Replace(" ", "")
-                                            .Trim();
-                                        // Sadece rakam, virgül ve nokta bırak
-                                        cleanValue = new string(cleanValue.Where(ch => char.IsDigit(ch) || ch == ',' || ch == '.').ToArray());
-
-                                        // Türkçe formatı dene (10.573 veya 1.550,00 gibi)
-                                        if (decimal.TryParse(cleanValue, System.Globalization.NumberStyles.Any, new System.Globalization.CultureInfo("tr-TR"), out decimal price))
+                                        if (price > 100)
                                         {
-                                            if (price > 100)
+                                            offerList.Add($"{headerKey}: {cellValue}");
+                                            if (price < minPrice)
                                             {
-                                                offerList.Add($"{headerKey}: {cellValue}");
-                                                if (price < minPrice)
-                                                {
-                                                    minPrice = price;
-                                                    minCompany = headerKey;
-                                                    rawMinPriceStr = cellValue;
-                                                }
+                                                minPrice = price;
+                                                minCompany = headerKey;
+                                                rawMinPriceStr = cellValue;
                                             }
                                         }
-                                        else
+                                    }
+                                    else
+                                    {
+                                        if (decimal.TryParse(cleanValue, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal priceEn))
                                         {
-                                            // İngilizce formatı da dene (1550.50 gibi)
-                                            if (decimal.TryParse(cleanValue, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal priceEn))
+                                            if (priceEn > 100)
                                             {
-                                                if (priceEn > 100)
+                                                offerList.Add($"{headerKey}: {cellValue}");
+                                                if (priceEn < minPrice)
                                                 {
-                                                    offerList.Add($"{headerKey}: {cellValue}");
-                                                    if (priceEn < minPrice)
-                                                    {
-                                                        minPrice = priceEn;
-                                                        minCompany = headerKey;
-                                                        rawMinPriceStr = cellValue;
-                                                    }
+                                                    minPrice = priceEn;
+                                                    minCompany = headerKey;
+                                                    rawMinPriceStr = cellValue;
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-
-                            // Özel Parametreleri Ekle
-                            if (offerList.Any())
-                            {
-                                log.Parameters["Teklifler"] = string.Join("\n", offerList);
-                                log.Parameters["EnUygunFiyat"] = rawMinPriceStr;
-                                log.Parameters["EnUygunSirket"] = minCompany;
-                                log.Parameters["EnUygunTeklif"] = $"{minCompany}: {rawMinPriceStr}";
-                            }
-
-                            messageLogs.Add(log);
                         }
+
+                        if (offerList.Any())
+                        {
+                            log.Parameters["Teklifler"] = string.Join("\n", offerList);
+                            log.Parameters["EnUygunFiyat"] = rawMinPriceStr;
+                            log.Parameters["EnUygunSirket"] = minCompany;
+                            log.Parameters["EnUygunTeklif"] = $"{minCompany}: {rawMinPriceStr}";
+                        }
+
+                        messageLogs.Add(log);
                     }
                 }
 
@@ -377,6 +421,53 @@ namespace AcentemOto.Services
             }
 
             return values.OrderBy(v => v).ToList();
+        }
+
+        /// <summary>
+        /// Çapraz Satış ve Kampanya hedeflerini filtreler.
+        /// </summary>
+        public List<MessageLog> GetCrossSellTargets(List<MessageLog> allLogs, string campaignType)
+        {
+            var targets = new List<MessageLog>();
+
+            if (string.IsNullOrWhiteSpace(campaignType))
+                return targets;
+
+            foreach (var log in allLogs)
+            {
+                bool isTarget = false;
+
+                bool hasTrafik = log.Parameters.Keys.Any(k => k.IndexOf("Trafik", StringComparison.OrdinalIgnoreCase) >= 0 && !string.IsNullOrWhiteSpace(log.Parameters[k]));
+                bool hasIMM = log.Parameters.Keys.Any(k => (k.IndexOf("İMM", StringComparison.OrdinalIgnoreCase) >= 0 || k.IndexOf("IMM", StringComparison.OrdinalIgnoreCase) >= 0) && !string.IsNullOrWhiteSpace(log.Parameters[k]));
+                bool hasKasko = log.Parameters.Keys.Any(k => k.IndexOf("Kasko", StringComparison.OrdinalIgnoreCase) >= 0 && !string.IsNullOrWhiteSpace(log.Parameters[k]));
+                bool hasTSS = log.Parameters.Keys.Any(k => (k.IndexOf("TSS", StringComparison.OrdinalIgnoreCase) >= 0 || k.IndexOf("Sağlık", StringComparison.OrdinalIgnoreCase) >= 0 || k.IndexOf("Saglik", StringComparison.OrdinalIgnoreCase) >= 0) && !string.IsNullOrWhiteSpace(log.Parameters[k]));
+
+                if (campaignType == "Trafik'ten İMM'ye")
+                {
+                    // Trafik poliçesi var, İMM poliçesi yoksa
+                    if (hasTrafik && !hasIMM)
+                        isTarget = true;
+                }
+                else if (campaignType == "Trafik'ten Kasko'ya")
+                {
+                    // Trafik poliçesi var, Kasko poliçesi yoksa
+                    if (hasTrafik && !hasKasko)
+                        isTarget = true;
+                }
+                else if (campaignType == "TSS Kampanyası")
+                {
+                    // Sağlık poliçesi olmayanlara kampanya
+                    if (!hasTSS)
+                        isTarget = true;
+                }
+
+                if (isTarget)
+                {
+                    targets.Add(log);
+                }
+            }
+
+            return targets;
         }
     }
 }

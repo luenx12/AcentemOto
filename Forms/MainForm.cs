@@ -37,6 +37,7 @@ namespace AcentemOto.Forms
             _excelService = new ExcelService();
             _messageLogs = new BindingList<MessageLog>();
             dgvNumbers.DataSource = _messageLogs;
+            InitializeCrossSellTab();
 
             try 
             {
@@ -57,13 +58,19 @@ namespace AcentemOto.Forms
                 Primary.Red500, Accent.Red200, TextShade.WHITE
             );
 
-            // Veritabanının ilk açılışta oluşturulmasını sağla
             using (var context = new AppDbContext())
             {
                 context.Database.EnsureCreated();
             }
-
+            
             UpdateDashboard();
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            // Tasarımı ezen dinamik yerleşimi iptal ettik, böylece
+            // Visual Studio ekranındaki form (Image 1) çalışma anında da (Image 2) birebir aynı görünecektir.
         }
 
         private void Log(string message)
@@ -122,7 +129,40 @@ namespace AcentemOto.Forms
 
                         _messageLogs.Clear();
                         
-                        var loadedLogs = await _excelService.ReadPhoneNumbersAsync(ofd.FileName);
+                        List<MessageLog>? loadedLogs = null;
+                        bool isLoaded = false;
+                        string? currentPassword = null;
+                        
+                        while (!isLoaded)
+                        {
+                            try
+                            {
+                                loadedLogs = await _excelService.ReadPhoneNumbersAsync(ofd.FileName, currentPassword);
+                                isLoaded = true;
+                            }
+                            catch (Exception ex) when (ex.Message.Contains("encrypted") || ex.Message.Contains("password") || ex.Message.Contains("şifre") || ex.Message.Contains("şifrelenmiş"))
+                            {
+                                if (currentPassword != null)
+                                {
+                                    MessageBox.Show("Giriş başarısız. Girdiğiniz şifre hatalı olabilir. Lütfen şifrenin başında veya sonunda boşluk bırakmadığınıza emin olunuz.", "Hatalı Şifre", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                }
+
+                                currentPassword = PromptForPassword();
+                                if (string.IsNullOrEmpty(currentPassword))
+                                {
+                                    Log("Şifre girişi iptal edildi.");
+                                    UpdateStatus("İptal edildi.");
+                                    btnLoadExcel.Enabled = true;
+                                    return;
+                                }
+                            }
+                        }
+
+                        if (loadedLogs == null) 
+                        {
+                            btnLoadExcel.Enabled = true;
+                            return;
+                        }
                         
                         var newLogs = new List<MessageLog>();
                         foreach (var log in loadedLogs)
@@ -158,7 +198,36 @@ namespace AcentemOto.Forms
             }
         }
 
-        private async void BtnExport_Click(object sender, EventArgs e)
+        private string PromptForPassword()
+        {
+            using (Form prompt = new Form())
+            {
+                prompt.Width = 450;
+                prompt.Height = 220;
+                prompt.FormBorderStyle = FormBorderStyle.FixedDialog;
+                prompt.Text = "Şifreli Excel";
+                prompt.StartPosition = FormStartPosition.CenterScreen;
+                prompt.MaximizeBox = false;
+
+                Label textLabel = new Label() { Left = 50, Top = 20, Width = 350, Text = "Excel dosyası şifreli. Lütfen şifreyi giriniz:" };
+                TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 280, PasswordChar = '*' };
+                
+                CheckBox chkShowPass = new CheckBox() { Left = 340, Top = 50, Width = 80, Text = "Göster" };
+                chkShowPass.CheckedChanged += (s, e) => { textBox.PasswordChar = chkShowPass.Checked ? '\0' : '*'; };
+
+                Button confirmation = new Button() { Text = "Tamam", Left = 160, Width = 100, Top = 100, DialogResult = DialogResult.OK };
+                
+                prompt.Controls.Add(textBox);
+                prompt.Controls.Add(chkShowPass);
+                prompt.Controls.Add(confirmation);
+                prompt.Controls.Add(textLabel);
+                prompt.AcceptButton = confirmation;
+
+                return prompt.ShowDialog() == DialogResult.OK ? textBox.Text.Trim() : string.Empty;
+            }
+        }
+
+        private async void BtnExport_Click(object? sender, EventArgs e)
         {
             if (_messageLogs.Count == 0)
             {
@@ -338,7 +407,11 @@ namespace AcentemOto.Forms
 
             try
             {
-                await _whatsAppService!.SendMessageAsync(pendingLogs, txtMessage.Text, _attachmentPath, progress, _cancellationTokenSource.Token);
+                if (cmbSpeed.SelectedIndex == 0) _whatsAppService!.AntiSpam.SeciliHiz = GonderimHizi.Hizli;
+                else if (cmbSpeed.SelectedIndex == 2) _whatsAppService!.AntiSpam.SeciliHiz = GonderimHizi.Yavas;
+                else _whatsAppService!.AntiSpam.SeciliHiz = GonderimHizi.Orta;
+
+                await _whatsAppService!.SendMessageAsync(pendingLogs, txtMessage.Text, _attachmentPath, progress, _cancellationTokenSource.Token, useUniqueHash: chkHash.Checked);
                 Log("Tüm gönderim işlemleri tamamlandı.");
                 UpdateStatus("Tamamlandı.");
             }
@@ -592,7 +665,11 @@ namespace AcentemOto.Forms
 
             try
             {
-                await _whatsAppService.SendMessageAsync(pendingLogs, txtCatMessage.Text, _catAttachmentPath, progress, _catCancellationTokenSource.Token);
+                if (cmbSpeed.SelectedIndex == 0) _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Hizli;
+                else if (cmbSpeed.SelectedIndex == 2) _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Yavas;
+                else _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Orta;
+
+                await _whatsAppService.SendMessageAsync(pendingLogs, txtCatMessage.Text, _catAttachmentPath, progress, _catCancellationTokenSource.Token, useUniqueHash: chkHash.Checked);
                 CatLog("Tüm gönderim işlemleri tamamlandı.");
                 UpdateCatStatus("Tamamlandı.");
             }
@@ -689,5 +766,389 @@ namespace AcentemOto.Forms
                 Console.WriteLine($"Kapanırken hata oluştu: {ex.Message}");
             }
         }
+
+        // ============================================================
+        // ÇAPRAZ SATIŞ VE KAMPANYA TAB - PROGRAMMATIC UI
+        // ============================================================
+        
+        private TabPage? tabKampanya;
+        private MaterialSkin.Controls.MaterialComboBox? cmbCampaignType;
+        private MaterialSkin.Controls.MaterialTextBox2? txtCampaignAd;
+        private MaterialSkin.Controls.MaterialMultiLineTextBox2? txtCrossSellMessage;
+        private DataGridView? dgvCrossSell;
+        private MaterialSkin.Controls.MaterialButton? btnKampanyaFiltrele;
+        private MaterialSkin.Controls.MaterialButton? btnKampanyaGonder;
+        
+        private BindingList<MessageLog> _crossSellLogs = new BindingList<MessageLog>();
+        private CancellationTokenSource? _crossSellCancellationTokenSource;
+
+        private void InitializeCrossSellTab()
+        {
+            tabKampanya = new TabPage("Kampanya && Çapraz Satış");
+            tabKampanya.BackColor = System.Drawing.Color.White;
+
+            var pnlTop = new Panel { Dock = DockStyle.Top, Height = 100, Padding = new Padding(10) };
+            
+            cmbCampaignType = new MaterialSkin.Controls.MaterialComboBox
+            {
+                Location = new System.Drawing.Point(10, 10),
+                Width = 250,
+                Hint = "Kampanya Türü Seçin"
+            };
+            cmbCampaignType.Items.AddRange(new object[] { "Trafik'ten İMM'ye", "Trafik'ten Kasko'ya", "TSS Kampanyası" });
+
+            btnKampanyaFiltrele = new MaterialSkin.Controls.MaterialButton
+            {
+                Text = "Filtrele",
+                Location = new System.Drawing.Point(280, 15),
+                Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained
+            };
+            btnKampanyaFiltrele.Click += BtnKampanyaFiltrele_Click;
+
+            pnlTop.Controls.Add(cmbCampaignType);
+            pnlTop.Controls.Add(btnKampanyaFiltrele);
+
+            var pnlBottom = new Panel { Dock = DockStyle.Bottom, Height = 250, Padding = new Padding(10) };
+            
+            var lblAd = new Label { Text = "Sabit Reklam Metni:", Location = new System.Drawing.Point(10, 10), AutoSize = true };
+            txtCampaignAd = new MaterialSkin.Controls.MaterialTextBox2
+            {
+                Location = new System.Drawing.Point(10, 30),
+                Width = 400,
+                Hint = "Örn: 5M İMM 1000TL, 3M İMM 700TL"
+            };
+
+            var lblMsg = new Label { Text = "Şablon Mesaj:", Location = new System.Drawing.Point(430, 10), AutoSize = true };
+            txtCrossSellMessage = new MaterialSkin.Controls.MaterialMultiLineTextBox2
+            {
+                Location = new System.Drawing.Point(430, 30),
+                Width = 500,
+                Height = 150,
+                Text = "Sayın müşterimiz, en uygun fiyat {EnUygunFiyat} ile {EnUygunSirket} şirketindendir."
+            };
+
+            btnKampanyaGonder = new MaterialSkin.Controls.MaterialButton
+            {
+                Text = "Kampanya Gönder",
+                Location = new System.Drawing.Point(10, 100),
+                Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained
+            };
+            btnKampanyaGonder.Click += BtnKampanyaGonder_Click;
+
+            pnlBottom.Controls.Add(lblAd);
+            pnlBottom.Controls.Add(txtCampaignAd);
+            pnlBottom.Controls.Add(lblMsg);
+            pnlBottom.Controls.Add(txtCrossSellMessage);
+            pnlBottom.Controls.Add(btnKampanyaGonder);
+
+            dgvCrossSell = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                BackgroundColor = System.Drawing.Color.WhiteSmoke,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                DataSource = _crossSellLogs
+            };
+
+            tabKampanya.Controls.Add(dgvCrossSell);
+            tabKampanya.Controls.Add(pnlTop);
+            tabKampanya.Controls.Add(pnlBottom);
+
+            this.tabControl.TabPages.Add(tabKampanya);
+        }
+
+        private void BtnKampanyaFiltrele_Click(object? sender, EventArgs e)
+        {
+            if (_messageLogs.Count == 0)
+            {
+                MessageBox.Show("Lütfen önce 'Gönderim Ekranı' sekmesinden Excel yükleyin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (cmbCampaignType!.SelectedIndex < 0)
+            {
+                MessageBox.Show("Lütfen bir kampanya türü (örn: Trafik'ten İMM'ye) seçin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string selectedCampaign = cmbCampaignType.SelectedItem?.ToString() ?? "";
+            
+            var targets = _excelService.GetCrossSellTargets(_messageLogs.ToList(), selectedCampaign);
+
+            _crossSellLogs.Clear();
+            foreach (var log in targets)
+            {
+                _crossSellLogs.Add(log);
+            }
+
+            dgvCrossSell!.DataSource = null;
+            dgvCrossSell.DataSource = _crossSellLogs;
+            dgvCrossSell.Refresh();
+
+            Log($"{_crossSellLogs.Count} müşteri '{selectedCampaign}' kampanyası için hedeflendi.");
+        }
+
+        private async void BtnKampanyaGonder_Click(object? sender, EventArgs e)
+        {
+            if (_whatsAppService == null)
+            {
+                MessageBox.Show("Lütfen önce 'Gönderim Ekranı' sekmesinden WhatsApp'a bağlanın.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtCrossSellMessage!.Text))
+            {
+                MessageBox.Show("Lütfen şablon mesaj kutusuna kampanya mesajınızı girin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var pendingLogs = _crossSellLogs.Where(x => x.Status == MessageStatus.Pending || x.Status == MessageStatus.Failed).ToList();
+            if (!pendingLogs.Any())
+            {
+                MessageBox.Show("Gönderilecek müşteri bulunamadı. Önce filtreleme yapmalısınız.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string finalMessage = txtCrossSellMessage!.Text;
+            if (!string.IsNullOrWhiteSpace(txtCampaignAd!.Text))
+            {
+                finalMessage += "\n\n" + txtCampaignAd.Text;
+            }
+
+            _crossSellCancellationTokenSource = new CancellationTokenSource();
+            btnKampanyaGonder!.Enabled = false;
+            btnKampanyaFiltrele!.Enabled = false;
+
+            Log("Kampanya gönderimi başlatılıyor...");
+            
+            var progress = new Progress<string>(msg =>
+            {
+                Log(msg);
+                if (msg.StartsWith("Başarılı") || msg.StartsWith("Hata"))
+                {
+                    dgvCrossSell!.Refresh();
+                }
+            });
+
+            try
+            {
+                if (cmbSpeed.SelectedIndex == 0) _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Hizli;
+                else if (cmbSpeed.SelectedIndex == 2) _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Yavas;
+                else _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Orta;
+
+                await _whatsAppService.SendMessageAsync(
+                    pendingLogs, 
+                    finalMessage, 
+                    null, 
+                    progress, 
+                    _crossSellCancellationTokenSource.Token, 
+                    useUniqueHash: chkHash.Checked
+                );
+                
+                Log("Kampanya gönderimi başarıyla tamamlandı!");
+            }
+            catch (Exception ex)
+            {
+                Log($"Gönderim işlemi sırasında hata alındı: {ex.Message}");
+            }
+            finally
+            {
+                btnKampanyaGonder!.Enabled = true;
+                btnKampanyaFiltrele!.Enabled = true;
+                _crossSellCancellationTokenSource?.Dispose();
+                _crossSellCancellationTokenSource = null;
+                dgvCrossSell!.Refresh();
+            }
+        }
+
+        private void SetupModernLayout()
+        {
+            // 1. GÖNDERİM EKRANI (Split Container)
+            var splitContainer = new System.Windows.Forms.SplitContainer
+            {
+                Dock = System.Windows.Forms.DockStyle.Fill,
+                Orientation = System.Windows.Forms.Orientation.Vertical,
+                SplitterDistance = (int)(this.Width * 0.6),
+                BackColor = System.Drawing.Color.White
+            };
+            
+            // Mevcut kontrolleri listeye al
+            var tab1Controls = new System.Collections.Generic.List<System.Windows.Forms.Control>();
+            foreach (System.Windows.Forms.Control c in tabGönderim.Controls) tab1Controls.Add(c);
+            tabGönderim.Controls.Clear();
+            tabGönderim.Controls.Add(splitContainer);
+
+            // Sol Panel Alt Kısım (TableLayoutPanel)
+            var pnlLeftSettings = new System.Windows.Forms.TableLayoutPanel
+            {
+                Dock = System.Windows.Forms.DockStyle.Bottom,
+                ColumnCount = 2,
+                AutoSize = true,
+                Padding = new System.Windows.Forms.Padding(10)
+            };
+            pnlLeftSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            pnlLeftSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+
+            pnlLeftSettings.Controls.Add(cmbProfile, 0, 0);
+            pnlLeftSettings.Controls.Add(chkHeadless, 1, 0);
+            pnlLeftSettings.Controls.Add(btnLoadExcel, 0, 1);
+            pnlLeftSettings.Controls.Add(btnExport, 1, 1);
+            pnlLeftSettings.Controls.Add(btnConnect, 0, 2);
+            pnlLeftSettings.Controls.Add(cmbSpeed, 1, 2);
+            pnlLeftSettings.Controls.Add(chkSchedule, 0, 3);
+            pnlLeftSettings.Controls.Add(dtpSchedule, 1, 3);
+            
+            chkHash.Margin = new System.Windows.Forms.Padding(3, 10, 3, 10);
+            pnlLeftSettings.Controls.Add(chkHash, 0, 4);
+            pnlLeftSettings.SetColumnSpan(chkHash, 2);
+
+            var pnlStartStop = new System.Windows.Forms.FlowLayoutPanel { AutoSize = true, Dock = System.Windows.Forms.DockStyle.Fill };
+            pnlStartStop.Controls.Add(btnStartSending);
+            pnlStartStop.Controls.Add(btnStop);
+            pnlLeftSettings.Controls.Add(pnlStartStop, 0, 5);
+            pnlLeftSettings.SetColumnSpan(pnlStartStop, 2);
+
+            // Durum ve Progress
+            var pnlStatus = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Bottom, Height = 60 };
+            lblStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
+            progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            pnlStatus.Controls.Add(progressBar);
+            pnlStatus.Controls.Add(lblStatus);
+
+            dgvNumbers.Dock = System.Windows.Forms.DockStyle.Fill;
+
+            splitContainer.Panel1.Controls.Add(dgvNumbers);
+            splitContainer.Panel1.Controls.Add(pnlLeftSettings);
+            splitContainer.Panel1.Controls.Add(pnlStatus);
+
+            // Sağ Panel (Mesaj Alanı)
+            var pnlRightBottom = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Bottom, Height = 300 };
+            
+            var flpAttachments = new System.Windows.Forms.FlowLayoutPanel { Dock = System.Windows.Forms.DockStyle.Top, AutoSize = true, Padding = new System.Windows.Forms.Padding(5) };
+            flpAttachments.Controls.Add(btnAttachment);
+            flpAttachments.Controls.Add(btnRemoveAttachment);
+            flpAttachments.Controls.Add(lblAttachment);
+
+            rtbLog.Dock = System.Windows.Forms.DockStyle.Bottom;
+            rtbLog.Height = 200;
+
+            pnlRightBottom.Controls.Add(rtbLog);
+            pnlRightBottom.Controls.Add(flpAttachments);
+
+            txtMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+            label1.Dock = System.Windows.Forms.DockStyle.Top;
+
+            splitContainer.Panel2.Controls.Add(txtMessage);
+            splitContainer.Panel2.Controls.Add(label1);
+            splitContainer.Panel2.Controls.Add(pnlRightBottom);
+
+            // 2. KATEGORİ GÖNDERİM TAB (Tab 2)
+            var flpCatFilters = new System.Windows.Forms.FlowLayoutPanel
+            {
+                Dock = System.Windows.Forms.DockStyle.Top,
+                AutoSize = true,
+                Padding = new System.Windows.Forms.Padding(10),
+                WrapContents = true
+            };
+            
+            if (pnlFilterBar != null)
+            {
+                var filterControls = new System.Collections.Generic.List<System.Windows.Forms.Control>();
+                foreach (System.Windows.Forms.Control c in pnlFilterBar.Controls) filterControls.Add(c);
+                foreach (var c in filterControls) flpCatFilters.Controls.Add(c);
+            }
+            
+            // En alt Panel (Mesaj ve İşlemler)
+            var pnlCatBottom = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Bottom, Height = 350 };
+            
+            var pnlCatMessage = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Top, Height = 100 };
+            lblCatMessage.Dock = System.Windows.Forms.DockStyle.Top;
+            txtCatMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+            pnlCatMessage.Controls.Add(txtCatMessage);
+            pnlCatMessage.Controls.Add(lblCatMessage);
+
+            var flpCatAttachments = new System.Windows.Forms.FlowLayoutPanel { Dock = System.Windows.Forms.DockStyle.Top, AutoSize = true, Padding = new System.Windows.Forms.Padding(5) };
+            flpCatAttachments.Controls.Add(btnCatAttachment);
+            flpCatAttachments.Controls.Add(btnRemoveCatAttachment);
+            flpCatAttachments.Controls.Add(lblCatAttachment);
+            flpCatAttachments.Controls.Add(btnSendFiltered);
+            flpCatAttachments.Controls.Add(btnStopCat);
+
+            var pnlCatStatus = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Bottom, Height = 180 };
+            rtbCatLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            progressBarCat.Dock = System.Windows.Forms.DockStyle.Bottom;
+            lblCatStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
+            pnlCatStatus.Controls.Add(rtbCatLog);
+            pnlCatStatus.Controls.Add(progressBarCat);
+            pnlCatStatus.Controls.Add(lblCatStatus);
+
+            pnlCatBottom.Controls.Add(pnlCatMessage);
+            pnlCatBottom.Controls.Add(flpCatAttachments);
+            pnlCatBottom.Controls.Add(pnlCatStatus);
+            pnlCatBottom.Controls.Add(rtbHelp); // Sağda
+            rtbHelp.Dock = System.Windows.Forms.DockStyle.Right;
+            rtbHelp.Width = 350;
+
+            dgvFiltered.Dock = System.Windows.Forms.DockStyle.Fill;
+
+            tabKategori.Controls.Clear();
+            tabKategori.Controls.Add(dgvFiltered);
+            tabKategori.Controls.Add(flpCatFilters);
+            tabKategori.Controls.Add(pnlCatBottom);
+
+            // 3. İSTATİSTİKLER (Dashboard)
+            tabDashboard.Controls.Clear();
+            var tlpDashboard = new System.Windows.Forms.TableLayoutPanel
+            {
+                Dock = System.Windows.Forms.DockStyle.Fill,
+                ColumnCount = 2,
+                RowCount = 2,
+                Padding = new System.Windows.Forms.Padding(50)
+            };
+            tlpDashboard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tlpDashboard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tlpDashboard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tlpDashboard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+
+            tlpDashboard.Controls.Add(CreateCard(lblTotal, System.Drawing.Color.DarkBlue), 0, 0);
+            tlpDashboard.Controls.Add(CreateCard(lblPending, System.Drawing.Color.DarkOrange), 1, 0);
+            tlpDashboard.Controls.Add(CreateCard(lblSuccess, System.Drawing.Color.ForestGreen), 0, 1);
+            tlpDashboard.Controls.Add(CreateCard(lblFailed, System.Drawing.Color.Crimson), 1, 1);
+
+            tabDashboard.Controls.Add(tlpDashboard);
+
+            // 4. DATAGRIDVIEW AYARLARI
+            FormatGrid(dgvNumbers);
+            FormatGrid(dgvFiltered);
+        }
+
+        private System.Windows.Forms.Panel CreateCard(System.Windows.Forms.Control lbl, System.Drawing.Color color)
+        {
+            var pnl = new System.Windows.Forms.Panel
+            {
+                Dock = System.Windows.Forms.DockStyle.Fill,
+                Margin = new System.Windows.Forms.Padding(20),
+                BackColor = System.Drawing.Color.White,
+                BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+            };
+            lbl.Dock = System.Windows.Forms.DockStyle.Fill;
+            lbl.ForeColor = color;
+            pnl.Controls.Add(lbl);
+            return pnl;
+        }
+
+        private void FormatGrid(System.Windows.Forms.DataGridView dgv)
+        {
+            dgv.BackgroundColor = System.Drawing.Color.White;
+            dgv.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(245, 245, 250);
+            dgv.EnableHeadersVisualStyles = false;
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(55, 71, 79);
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            dgv.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            dgv.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            dgv.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+        }
+
     }
 }

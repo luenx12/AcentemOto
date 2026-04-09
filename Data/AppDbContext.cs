@@ -17,7 +17,7 @@ namespace AcentemOto.Data
         {
             // Veritabanını uygulamanın çalıştığı klasörde oluşturur
             string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "messages.db");
-            optionsBuilder.UseSqlite($"Data Source={dbPath};Cache=Shared;Mode=ReadWriteCreate;Journal Mode=WAL;Default Timeout=5;");
+            optionsBuilder.UseSqlite($"Data Source={dbPath};Cache=Shared;Mode=ReadWriteCreate;");
         }
     }
 }
