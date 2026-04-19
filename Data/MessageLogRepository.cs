@@ -50,5 +50,13 @@ namespace AcentemOto.Data
                 return await context.MessageLogs.AsNoTracking().Where(x => x.Status == status).ToListAsync();
             }
         }
+        public async Task ClearAllLogsAsync()
+        {
+            using (var context = new AppDbContext())
+            {
+                // Tek SQL komutuyla tüm kayıtları hızlıca sil (belleğe çekmeden)
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM MessageLogs");
+            }
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace AcentemOto.Data
         Task UpdateLogAsync(MessageLog log);
         Task<List<MessageLog>> GetAllLogsAsync();
         Task<List<MessageLog>> GetLogsByStatusAsync(MessageStatus status);
+        Task ClearAllLogsAsync();
     }
 }

@@ -24,11 +24,21 @@ namespace AcentemOto.Forms
         private CancellationTokenSource? _cancellationTokenSource;
         private string? _attachmentPath;
         private bool _isSending = false;
+        private MaterialSkin.Controls.MaterialButton? btnClearData;
 
         // Kategori Gönderim tab alanları
         private BindingList<MessageLog> _filteredLogs = new BindingList<MessageLog>();
         private string? _catAttachmentPath;
         private CancellationTokenSource? _catCancellationTokenSource;
+
+        // Şablon, Önizleme ve Kampanya Durdur kontrolleri
+        private readonly TemplateService _templateService = new TemplateService();
+        private MaterialSkin.Controls.MaterialComboBox? cmbTemplates;
+        private MaterialSkin.Controls.MaterialButton? btnSaveTemplate;
+        private MaterialSkin.Controls.MaterialButton? btnPreview;
+        private MaterialSkin.Controls.MaterialButton? btnKampanyaDur;
+        private MaterialSkin.Controls.MaterialComboBox? cmbCampaignSpeed;
+        private string _selectedCampaignType = "";
 
         public MainForm()
         {
@@ -38,17 +48,14 @@ namespace AcentemOto.Forms
             _messageLogs = new BindingList<MessageLog>();
             dgvNumbers.DataSource = _messageLogs;
             InitializeCrossSellTab();
+            InitializeExtraControls();
 
-            try 
-            {
-                btnLoadExcel.Icon = System.Drawing.Image.FromFile(@"Icons\upload.png");
-                btnExport.Icon = System.Drawing.Image.FromFile(@"Icons\download.png");
-                btnConnect.Icon = System.Drawing.Image.FromFile(@"Icons\connect.png");
-                btnStartSending.Icon = System.Drawing.Image.FromFile(@"Icons\send.png");
-                btnStop.Icon = System.Drawing.Image.FromFile(@"Icons\stop.png");
-                btnAttachment.Icon = System.Drawing.Image.FromFile(@"Icons\photo.png");
-            } 
-            catch { }
+            TrySetIcon(btnLoadExcel, "upload.png");
+            TrySetIcon(btnExport, "download.png");
+            TrySetIcon(btnConnect, "connect.png");
+            TrySetIcon(btnStartSending, "send.png");
+            TrySetIcon(btnStop, "stop.png");
+            TrySetIcon(btnAttachment, "photo.png");
 
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
@@ -58,12 +65,10 @@ namespace AcentemOto.Forms
                 Primary.Red500, Accent.Red200, TextShade.WHITE
             );
 
-            using (var context = new AppDbContext())
-            {
-                context.Database.EnsureCreated();
-            }
-            
+            SetupTabIcons();
+
             UpdateDashboard();
+            LoadTemplateComboBox();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -128,11 +133,11 @@ namespace AcentemOto.Forms
                         UpdateStatus("Excel okunuyor...");
 
                         _messageLogs.Clear();
-                        
+
                         List<MessageLog>? loadedLogs = null;
                         bool isLoaded = false;
                         string? currentPassword = null;
-                        
+
                         while (!isLoaded)
                         {
                             try
@@ -158,12 +163,12 @@ namespace AcentemOto.Forms
                             }
                         }
 
-                        if (loadedLogs == null) 
+                        if (loadedLogs == null)
                         {
                             btnLoadExcel.Enabled = true;
                             return;
                         }
-                        
+
                         var newLogs = new List<MessageLog>();
                         foreach (var log in loadedLogs)
                         {
@@ -198,6 +203,38 @@ namespace AcentemOto.Forms
             }
         }
 
+        private async void BtnClearData_Click(object? sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Tüm yüklenmiş veriler ve filtreler temizlenecek. Devam etmek istiyor musunuz?", "Onay", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                // UI Lists clear
+                _messageLogs.Clear();
+                _filteredLogs.Clear();
+                _crossSellLogs.Clear();
+
+                // Dashboard Update
+                UpdateDashboard();
+                lblFilteredCount.Text = "📋 Filtrelenen: 0 kayıt";
+
+                // DB Clear All
+                try
+                {
+                    await _repository.ClearAllLogsAsync();
+                    Log("Veritabanı ve hafıza temizlendi.");
+                }
+                catch (Exception ex)
+                {
+                    Log($"Veritabanı temizlenirken hata oluştu: {ex.Message}");
+                }
+
+                // Grid refreshes
+                dgvNumbers.Refresh();
+                dgvFiltered.Refresh();
+                if (dgvCrossSell != null) dgvCrossSell.Refresh();
+            }
+        }
+
         private string PromptForPassword()
         {
             using (Form prompt = new Form())
@@ -211,12 +248,12 @@ namespace AcentemOto.Forms
 
                 Label textLabel = new Label() { Left = 50, Top = 20, Width = 350, Text = "Excel dosyası şifreli. Lütfen şifreyi giriniz:" };
                 TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 280, PasswordChar = '*' };
-                
+
                 CheckBox chkShowPass = new CheckBox() { Left = 340, Top = 50, Width = 80, Text = "Göster" };
                 chkShowPass.CheckedChanged += (s, e) => { textBox.PasswordChar = chkShowPass.Checked ? '\0' : '*'; };
 
                 Button confirmation = new Button() { Text = "Tamam", Left = 160, Width = 100, Top = 100, DialogResult = DialogResult.OK };
-                
+
                 prompt.Controls.Add(textBox);
                 prompt.Controls.Add(chkShowPass);
                 prompt.Controls.Add(confirmation);
@@ -239,7 +276,7 @@ namespace AcentemOto.Forms
             {
                 sfd.Filter = "Excel Dosyası|*.xlsx";
                 sfd.FileName = $"Rapor_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
-                
+
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
                     try
@@ -297,10 +334,10 @@ namespace AcentemOto.Forms
 
                 _whatsAppService?.Dispose();
                 _whatsAppService = new WhatsAppAutomationService(_repository);
-                
+
                 bool isHeadless = chkHeadless.Checked;
                 string profileName = string.IsNullOrWhiteSpace(cmbProfile.Text) ? "DefaultProfile" : cmbProfile.Text;
-                
+
                 _whatsAppService.InitializeDriver(isHeadless, profileName);
 
                 Log($"Kullanılan Profil: {profileName}");
@@ -353,14 +390,14 @@ namespace AcentemOto.Forms
                     MessageBox.Show("Lütfen gelecekteki bir zaman seçin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                
+
                 Log($"Gönderim işlemi saat {dtpSchedule.Value:HH:mm}'a zamanlandı. Programı açık bırakın.");
                 UpdateStatus($"Zamanlandı: {dtpSchedule.Value:HH:mm}");
                 btnStartSending.Enabled = false;
                 btnConnect.Enabled = false;
                 btnLoadExcel.Enabled = false;
                 btnStop.Enabled = true;
-                
+
                 tmrSchedule.Start();
                 return;
             }
@@ -375,7 +412,7 @@ namespace AcentemOto.Forms
                 tmrSchedule.Stop();
                 chkSchedule.Checked = false;
                 Log("Zamanı geldi! Gönderim otomatik olarak başlatılıyor...");
-                
+
                 var pendingLogs = _messageLogs.Where(x => x.Status == MessageStatus.Pending || x.Status == MessageStatus.Failed).ToList();
                 _ = StartAutomationProcess(pendingLogs);
             }
@@ -385,12 +422,12 @@ namespace AcentemOto.Forms
         {
             _isSending = true;
             _cancellationTokenSource = new CancellationTokenSource();
-            
+
             btnStartSending.Enabled = false;
             btnStop.Enabled = true;
             progressBar.Maximum = pendingLogs.Count;
             progressBar.Value = 0;
-            
+
             Log("Gönderim başlatıldı...");
             UpdateStatus("Gönderim devam ediyor.");
 
@@ -407,13 +444,14 @@ namespace AcentemOto.Forms
 
             try
             {
-                if (cmbSpeed.SelectedIndex == 0) _whatsAppService!.AntiSpam.SeciliHiz = GonderimHizi.Hizli;
-                else if (cmbSpeed.SelectedIndex == 2) _whatsAppService!.AntiSpam.SeciliHiz = GonderimHizi.Yavas;
-                else _whatsAppService!.AntiSpam.SeciliHiz = GonderimHizi.Orta;
+                ApplySpeedSetting(cmbSpeed);
 
-                await _whatsAppService!.SendMessageAsync(pendingLogs, txtMessage.Text, _attachmentPath, progress, _cancellationTokenSource.Token, useUniqueHash: chkHash.Checked);
+                var result = await _whatsAppService!.SendMessageAsync(pendingLogs, txtMessage.Text, _attachmentPath, progress, _cancellationTokenSource.Token, useUniqueHash: chkHash.Checked);
                 Log("Tüm gönderim işlemleri tamamlandı.");
                 UpdateStatus("Tamamlandı.");
+                MessageBox.Show(
+                    $"✅ Başarılı: {result.Success}\n❌ Hatalı: {result.Failed}\n⏭ Atlandı: {result.Skipped}\n⏱ Süre: {result.Duration:mm\\:ss}",
+                    "Gönderim Tamamlandı", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -583,7 +621,7 @@ namespace AcentemOto.Forms
                     _messageLogs.ToList(),
                     FilterCategory.Turu,
                     filterValue: cmbFilterValue.SelectedItem?.ToString());
-                
+
                 // Eğer tarih filtresi seçilirse Tür filtresini de beraber kullanmak istiyorsa diye opsiyonel bırakıyoruz ama direkt Tür seçildiyse zaten result dönüyor.
             }
             else if (selected.Contains("Tek Numara"))
@@ -665,13 +703,14 @@ namespace AcentemOto.Forms
 
             try
             {
-                if (cmbSpeed.SelectedIndex == 0) _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Hizli;
-                else if (cmbSpeed.SelectedIndex == 2) _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Yavas;
-                else _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Orta;
+                ApplySpeedSetting(cmbSpeed);
 
-                await _whatsAppService.SendMessageAsync(pendingLogs, txtCatMessage.Text, _catAttachmentPath, progress, _catCancellationTokenSource.Token, useUniqueHash: chkHash.Checked);
+                var result = await _whatsAppService.SendMessageAsync(pendingLogs, txtCatMessage.Text, _catAttachmentPath, progress, _catCancellationTokenSource.Token, useUniqueHash: chkHash.Checked);
                 CatLog("Tüm gönderim işlemleri tamamlandı.");
                 UpdateCatStatus("Tamamlandı.");
+                MessageBox.Show(
+                    $"✅ Başarılı: {result.Success}\n❌ Hatalı: {result.Failed}\n⏭ Atlandı: {result.Skipped}\n⏱ Süre: {result.Duration:mm\\:ss}",
+                    "Gönderim Tamamlandı", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -770,7 +809,7 @@ namespace AcentemOto.Forms
         // ============================================================
         // ÇAPRAZ SATIŞ VE KAMPANYA TAB - PROGRAMMATIC UI
         // ============================================================
-        
+
         private TabPage? tabKampanya;
         private MaterialSkin.Controls.MaterialComboBox? cmbCampaignType;
         private MaterialSkin.Controls.MaterialTextBox2? txtCampaignAd;
@@ -778,7 +817,8 @@ namespace AcentemOto.Forms
         private DataGridView? dgvCrossSell;
         private MaterialSkin.Controls.MaterialButton? btnKampanyaFiltrele;
         private MaterialSkin.Controls.MaterialButton? btnKampanyaGonder;
-        
+        private MaterialSkin.Controls.MaterialButton? btnExportCrossSell;
+
         private BindingList<MessageLog> _crossSellLogs = new BindingList<MessageLog>();
         private CancellationTokenSource? _crossSellCancellationTokenSource;
 
@@ -788,14 +828,14 @@ namespace AcentemOto.Forms
             tabKampanya.BackColor = System.Drawing.Color.White;
 
             var pnlTop = new Panel { Dock = DockStyle.Top, Height = 100, Padding = new Padding(10) };
-            
+
             cmbCampaignType = new MaterialSkin.Controls.MaterialComboBox
             {
                 Location = new System.Drawing.Point(10, 10),
                 Width = 250,
                 Hint = "Kampanya Türü Seçin"
             };
-            cmbCampaignType.Items.AddRange(new object[] { "Trafik'ten İMM'ye", "Trafik'ten Kasko'ya", "TSS Kampanyası" });
+            cmbCampaignType.Items.AddRange(new object[] { "Trafik'ten İMM'ye", "Trafik'ten Kasko'ya", "TSS Kampanyası", "DASK'tan Konut'a" });
 
             btnKampanyaFiltrele = new MaterialSkin.Controls.MaterialButton
             {
@@ -805,11 +845,20 @@ namespace AcentemOto.Forms
             };
             btnKampanyaFiltrele.Click += BtnKampanyaFiltrele_Click;
 
+            btnExportCrossSell = new MaterialSkin.Controls.MaterialButton
+            {
+                Text = "Rapor Olarak İndir",
+                Location = new System.Drawing.Point(380, 15),
+                Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined
+            };
+            btnExportCrossSell.Click += BtnExportCrossSell_Click;
+
             pnlTop.Controls.Add(cmbCampaignType);
             pnlTop.Controls.Add(btnKampanyaFiltrele);
+            pnlTop.Controls.Add(btnExportCrossSell);
 
             var pnlBottom = new Panel { Dock = DockStyle.Bottom, Height = 250, Padding = new Padding(10) };
-            
+
             var lblAd = new Label { Text = "Sabit Reklam Metni:", Location = new System.Drawing.Point(10, 10), AutoSize = true };
             txtCampaignAd = new MaterialSkin.Controls.MaterialTextBox2
             {
@@ -835,11 +884,35 @@ namespace AcentemOto.Forms
             };
             btnKampanyaGonder.Click += BtnKampanyaGonder_Click;
 
+            btnKampanyaDur = new MaterialSkin.Controls.MaterialButton
+            {
+                Text = "Durdur",
+                Location = new System.Drawing.Point(200, 100),
+                Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined,
+                Enabled = false
+            };
+            btnKampanyaDur.Click += (s, e) =>
+            {
+                _crossSellCancellationTokenSource?.Cancel();
+                Log("Kampanya gönderimi durduruldu.");
+            };
+
+            cmbCampaignSpeed = new MaterialSkin.Controls.MaterialComboBox
+            {
+                Location = new System.Drawing.Point(10, 160),
+                Width = 180,
+                Hint = "Gönderim Hızı"
+            };
+            cmbCampaignSpeed.Items.AddRange(new object[] { "Hızlı (5-10sn)", "Orta (12-28sn)", "Yavaş (25-40sn)" });
+            cmbCampaignSpeed.SelectedIndex = 1; // Varsayılan: Orta
+
             pnlBottom.Controls.Add(lblAd);
             pnlBottom.Controls.Add(txtCampaignAd);
             pnlBottom.Controls.Add(lblMsg);
             pnlBottom.Controls.Add(txtCrossSellMessage);
             pnlBottom.Controls.Add(btnKampanyaGonder);
+            pnlBottom.Controls.Add(btnKampanyaDur);
+            pnlBottom.Controls.Add(cmbCampaignSpeed);
 
             dgvCrossSell = new DataGridView
             {
@@ -872,7 +945,8 @@ namespace AcentemOto.Forms
             }
 
             string selectedCampaign = cmbCampaignType.SelectedItem?.ToString() ?? "";
-            
+            _selectedCampaignType = selectedCampaign;
+
             var targets = _excelService.GetCrossSellTargets(_messageLogs.ToList(), selectedCampaign);
 
             _crossSellLogs.Clear();
@@ -886,6 +960,46 @@ namespace AcentemOto.Forms
             dgvCrossSell.Refresh();
 
             Log($"{_crossSellLogs.Count} müşteri '{selectedCampaign}' kampanyası için hedeflendi.");
+        }
+
+        private async void BtnExportCrossSell_Click(object? sender, EventArgs e)
+        {
+            if (_crossSellLogs.Count == 0)
+            {
+                MessageBox.Show("Dışa aktarılacak çapraz satış verisi bulunamadı. Önce filtreleme yapın.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (var sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "Excel Dosyası|*.xlsx";
+                sfd.FileName = $"CaprazSatisRaporu_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        btnExportCrossSell!.Enabled = false;
+                        UpdateStatus("Excel oluşturuluyor...");
+                        await _excelService.ExportCrossSellReportAsync(
+                            _crossSellLogs.ToList(),
+                            sfd.FileName,
+                            _selectedCampaignType);
+                        Log("Çapraz Satış Raporu başarıyla kaydedildi.");
+                        UpdateStatus("Rapor kaydedildi.");
+                        MessageBox.Show("Rapor başarıyla kaydedildi. İlgili dosyaya teklif veya eksik verilerinizi girerek, programdaki 'Verileri Temizle' butonuna basıp ardından düzenlediğiniz dosyayı yükleyebilirsiniz.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Dışa aktarma hatası: {ex.Message}", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Log($"Hata: {ex.Message}");
+                    }
+                    finally
+                    {
+                        btnExportCrossSell!.Enabled = true;
+                    }
+                }
+            }
         }
 
         private async void BtnKampanyaGonder_Click(object? sender, EventArgs e)
@@ -918,9 +1032,10 @@ namespace AcentemOto.Forms
             _crossSellCancellationTokenSource = new CancellationTokenSource();
             btnKampanyaGonder!.Enabled = false;
             btnKampanyaFiltrele!.Enabled = false;
+            if (btnKampanyaDur != null) btnKampanyaDur.Enabled = true;
 
             Log("Kampanya gönderimi başlatılıyor...");
-            
+
             var progress = new Progress<string>(msg =>
             {
                 Log(msg);
@@ -932,20 +1047,30 @@ namespace AcentemOto.Forms
 
             try
             {
-                if (cmbSpeed.SelectedIndex == 0) _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Hizli;
-                else if (cmbSpeed.SelectedIndex == 2) _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Yavas;
-                else _whatsAppService.AntiSpam.SeciliHiz = GonderimHizi.Orta;
+                // Kampanya sekmesinin kendi hız ComboBox'ından oku
+                if (_whatsAppService != null)
+                {
+                    _whatsAppService.AntiSpam.SeciliHiz = (cmbCampaignSpeed?.SelectedIndex) switch
+                    {
+                        0 => GonderimHizi.Hizli,
+                        2 => GonderimHizi.Yavas,
+                        _ => GonderimHizi.Orta
+                    };
+                }
 
-                await _whatsAppService.SendMessageAsync(
-                    pendingLogs, 
-                    finalMessage, 
-                    null, 
-                    progress, 
-                    _crossSellCancellationTokenSource.Token, 
+                var result = await _whatsAppService!.SendMessageAsync(
+                    pendingLogs,
+                    finalMessage,
+                    null,
+                    progress,
+                    _crossSellCancellationTokenSource.Token,
                     useUniqueHash: chkHash.Checked
                 );
-                
-                Log("Kampanya gönderimi başarıyla tamamlandı!");
+
+                Log("✅ Kampanya gönderimi başarıyla tamamlandı!");
+                MessageBox.Show(
+                    $"✅ Başarılı: {result.Success}\n❌ Hatalı: {result.Failed}\n⏭ Atlandı: {result.Skipped}\n⏱ Süre: {result.Duration:mm\\:ss}",
+                    "Kampanya Tamamlandı", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -955,6 +1080,7 @@ namespace AcentemOto.Forms
             {
                 btnKampanyaGonder!.Enabled = true;
                 btnKampanyaFiltrele!.Enabled = true;
+                if (btnKampanyaDur != null) btnKampanyaDur.Enabled = false;
                 _crossSellCancellationTokenSource?.Dispose();
                 _crossSellCancellationTokenSource = null;
                 dgvCrossSell!.Refresh();
@@ -971,7 +1097,7 @@ namespace AcentemOto.Forms
                 SplitterDistance = (int)(this.Width * 0.6),
                 BackColor = System.Drawing.Color.White
             };
-            
+
             // Mevcut kontrolleri listeye al
             var tab1Controls = new System.Collections.Generic.List<System.Windows.Forms.Control>();
             foreach (System.Windows.Forms.Control c in tabGönderim.Controls) tab1Controls.Add(c);
@@ -991,13 +1117,27 @@ namespace AcentemOto.Forms
 
             pnlLeftSettings.Controls.Add(cmbProfile, 0, 0);
             pnlLeftSettings.Controls.Add(chkHeadless, 1, 0);
-            pnlLeftSettings.Controls.Add(btnLoadExcel, 0, 1);
+
+            btnClearData = new MaterialSkin.Controls.MaterialButton
+            {
+                Text = "Verileri Temizle",
+                Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined,
+                Margin = new System.Windows.Forms.Padding(0, 0, 5, 0)
+            };
+            btnClearData.Click += BtnClearData_Click;
+
+            var flpExcel = new System.Windows.Forms.FlowLayoutPanel { Dock = System.Windows.Forms.DockStyle.Fill, AutoSize = true, FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight };
+            btnLoadExcel.Margin = new System.Windows.Forms.Padding(0, 0, 5, 0);
+            flpExcel.Controls.Add(btnLoadExcel);
+            flpExcel.Controls.Add(btnClearData);
+
+            pnlLeftSettings.Controls.Add(flpExcel, 0, 1);
             pnlLeftSettings.Controls.Add(btnExport, 1, 1);
             pnlLeftSettings.Controls.Add(btnConnect, 0, 2);
             pnlLeftSettings.Controls.Add(cmbSpeed, 1, 2);
             pnlLeftSettings.Controls.Add(chkSchedule, 0, 3);
             pnlLeftSettings.Controls.Add(dtpSchedule, 1, 3);
-            
+
             chkHash.Margin = new System.Windows.Forms.Padding(3, 10, 3, 10);
             pnlLeftSettings.Controls.Add(chkHash, 0, 4);
             pnlLeftSettings.SetColumnSpan(chkHash, 2);
@@ -1023,7 +1163,7 @@ namespace AcentemOto.Forms
 
             // Sağ Panel (Mesaj Alanı)
             var pnlRightBottom = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Bottom, Height = 300 };
-            
+
             var flpAttachments = new System.Windows.Forms.FlowLayoutPanel { Dock = System.Windows.Forms.DockStyle.Top, AutoSize = true, Padding = new System.Windows.Forms.Padding(5) };
             flpAttachments.Controls.Add(btnAttachment);
             flpAttachments.Controls.Add(btnRemoveAttachment);
@@ -1050,17 +1190,17 @@ namespace AcentemOto.Forms
                 Padding = new System.Windows.Forms.Padding(10),
                 WrapContents = true
             };
-            
+
             if (pnlFilterBar != null)
             {
                 var filterControls = new System.Collections.Generic.List<System.Windows.Forms.Control>();
                 foreach (System.Windows.Forms.Control c in pnlFilterBar.Controls) filterControls.Add(c);
                 foreach (var c in filterControls) flpCatFilters.Controls.Add(c);
             }
-            
+
             // En alt Panel (Mesaj ve İşlemler)
             var pnlCatBottom = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Bottom, Height = 350 };
-            
+
             var pnlCatMessage = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Top, Height = 100 };
             lblCatMessage.Dock = System.Windows.Forms.DockStyle.Top;
             txtCatMessage.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1148,6 +1288,214 @@ namespace AcentemOto.Forms
             dgv.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             dgv.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             dgv.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+        }
+
+        /// <summary>Hız ComboBox'ına göre AntiSpam hızını ayarlar.</summary>
+        private void ApplySpeedSetting(MaterialSkin.Controls.MaterialComboBox speedCombo)
+        {
+            if (_whatsAppService == null) return;
+            _whatsAppService.AntiSpam.SeciliHiz = speedCombo.SelectedIndex switch
+            {
+                0 => GonderimHizi.Hizli,
+                2 => GonderimHizi.Yavas,
+                _ => GonderimHizi.Orta
+            };
+        }
+
+        /// <summary>Icon dosyası varsa butona yükler, yoksa veya hata olursa sessizce geçer.</summary>
+        private static void TrySetIcon(MaterialSkin.Controls.MaterialButton btn, string iconFile)
+        {
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Icons", iconFile);
+            if (File.Exists(path))
+            {
+                try { btn.Icon = System.Drawing.Image.FromFile(path); }
+                catch { /* Icon yüklenemedi, buton ikonsuz çalışmaya devam eder */ }
+            }
+        }
+
+        // ============================================================
+        // ÖNIZLEME, ŞABLON KAYDET/YÜKLE VE EXTRA KONTROLLER
+        // ============================================================
+
+        /// <summary>
+        /// Önizle butonu ve şablon ComboBox/Kaydet butonunu designer kontrollerin parent'larına ekler.
+        /// </summary>
+        private void InitializeExtraControls()
+        {
+            // --- ÖNIZLE BUTONU ---
+            btnPreview = new MaterialSkin.Controls.MaterialButton
+            {
+                Text = "Önizle",
+                Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined,
+                AutoSize = true
+            };
+            btnPreview.Click += BtnPreview_Click;
+
+            // btnStop'un parent'ına ekle — böylece aynı satırda görünür
+            if (btnStop?.Parent != null)
+                btnStop.Parent.Controls.Add(btnPreview);
+
+            // --- ŞABLON KONTROLLERI ---
+            cmbTemplates = new MaterialSkin.Controls.MaterialComboBox
+            {
+                Hint = "Şablon Seçin",
+                Width = 200,
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            cmbTemplates.SelectedIndexChanged += CmbTemplates_SelectedIndexChanged;
+
+            btnSaveTemplate = new MaterialSkin.Controls.MaterialButton
+            {
+                Text = "Şablon Kaydet",
+                Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Outlined,
+                AutoSize = true
+            };
+            btnSaveTemplate.Click += BtnSaveTemplate_Click;
+
+            // txtMessage'ın parent'ına şablon kontrollerini ekle
+            if (txtMessage?.Parent != null)
+            {
+                txtMessage.Parent.Controls.Add(cmbTemplates);
+                txtMessage.Parent.Controls.Add(btnSaveTemplate);
+            }
+        }
+
+        /// <summary>Seçili satırdaki müşteri verisiyle mesaj şablonunu doldurup önizler.</summary>
+        private void BtnPreview_Click(object sender, EventArgs e)
+        {
+            if (dgvNumbers.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Önizleme için listeden bir satır seçin.", "Uyarı",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtMessage.Text))
+            {
+                MessageBox.Show("Önizlenecek mesaj metni boş.", "Uyarı",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedLog = _messageLogs[dgvNumbers.SelectedRows[0].Index];
+
+            string preview = txtMessage.Text;
+            foreach (var param in selectedLog.Parameters)
+            {
+                preview = System.Text.RegularExpressions.Regex.Replace(
+                    preview,
+                    System.Text.RegularExpressions.Regex.Escape($"{{{param.Key}}}"),
+                    param.Value ?? "",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            }
+
+            MessageBox.Show(
+                $"📱 Alıcı: {selectedLog.PhoneNumber}\n\n{preview}",
+                "Mesaj Önizlemesi",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+        /// <summary>Mesaj şablonunu ada göre kaydeder.</summary>
+        private void BtnSaveTemplate_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtMessage.Text))
+            {
+                MessageBox.Show("Kaydedilecek mesaj boş.", "Uyarı",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string name = PromptForInput("Şablon adını girin:", "Şablon Kaydet", "Şablon 1");
+            if (string.IsNullOrWhiteSpace(name)) return;
+
+            _templateService.SaveTemplate(name.Trim(), txtMessage.Text);
+            LoadTemplateComboBox();
+            Log($"Şablon kaydedildi: {name.Trim()}");
+        }
+
+        /// <summary>Şablon seçilince txtMessage, txtCatMessage ve txtCrossSellMessage'ı doldurur.</summary>
+        private void CmbTemplates_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (cmbTemplates?.SelectedItem == null) return;
+            string name = cmbTemplates.SelectedItem.ToString() ?? "";
+            var templates = _templateService.LoadTemplates();
+            if (!templates.TryGetValue(name, out string? content)) return;
+
+            txtMessage.Text = content;
+            if (txtCatMessage != null) txtCatMessage.Text = content;
+            if (txtCrossSellMessage != null) txtCrossSellMessage.Text = content;
+            Log($"Şablon yüklendi: {name}");
+        }
+
+        /// <summary>Kayıtlı şablonları cmbTemplates ComboBox'ına yükler.</summary>
+        private void LoadTemplateComboBox()
+        {
+            if (cmbTemplates == null) return;
+            var templates = _templateService.LoadTemplates();
+            cmbTemplates.Items.Clear();
+            foreach (var key in templates.Keys)
+                cmbTemplates.Items.Add(key);
+        }
+
+        /// <summary>PromptForPassword stilinde tek satırlık metin girişi sağlayan yardımcı diyalog.</summary>
+        private static string PromptForInput(string label, string title, string defaultValue = "")
+        {
+            using Form prompt = new Form();
+            prompt.Width = 420;
+            prompt.Height = 180;
+            prompt.FormBorderStyle = FormBorderStyle.FixedDialog;
+            prompt.Text = title;
+            prompt.StartPosition = FormStartPosition.CenterScreen;
+            prompt.MaximizeBox = false;
+
+            var lbl = new Label { Left = 20, Top = 20, Width = 370, Text = label };
+            var txt = new TextBox { Left = 20, Top = 50, Width = 360, Text = defaultValue };
+            var btn = new Button { Text = "Tamam", Left = 140, Width = 120, Top = 90, DialogResult = DialogResult.OK };
+
+            prompt.Controls.Add(lbl);
+            prompt.Controls.Add(txt);
+            prompt.Controls.Add(btn);
+            prompt.AcceptButton = btn;
+
+            return prompt.ShowDialog() == DialogResult.OK ? txt.Text.Trim() : string.Empty;
+        }
+
+        /// <summary>TabControl sekmelerine icon atamasını yapar.</summary>
+        private void SetupTabIcons()
+        {
+            try
+            {
+                var imageList = new ImageList();
+                imageList.ImageSize = new System.Drawing.Size(24, 24);
+
+                string iconDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Icons");
+
+                // İkon dosya adları, klasördeki hazır veya ileride eklenebilecek olası ikonlar
+                string sendIcon = Path.Combine(iconDir, "send.png");
+                string catIcon = Path.Combine(iconDir, "connect.png"); // Alternatif olarak
+                string dashIcon = Path.Combine(iconDir, "photo.png");   // Alternatif
+                string campIcon = Path.Combine(iconDir, "upload.png"); // Alternatif
+
+                if (File.Exists(sendIcon)) imageList.Images.Add("gonderim", System.Drawing.Image.FromFile(sendIcon));
+                if (File.Exists(catIcon)) imageList.Images.Add("kategori", System.Drawing.Image.FromFile(catIcon));
+                if (File.Exists(dashIcon)) imageList.Images.Add("dashboard", System.Drawing.Image.FromFile(dashIcon));
+                if (File.Exists(campIcon)) imageList.Images.Add("kampanya", System.Drawing.Image.FromFile(campIcon));
+
+                tabControl.ImageList = imageList;
+
+                // Index bazında atama yap
+                if (imageList.Images.ContainsKey("gonderim")) tabGönderim.ImageKey = "gonderim";
+                if (imageList.Images.ContainsKey("kategori")) tabKategori.ImageKey = "kategori";
+                if (imageList.Images.ContainsKey("dashboard")) tabDashboard.ImageKey = "dashboard";
+
+                // Kampanya sekmesi TryCatch ile oluşturulduğu metodda
+                if (tabKampanya != null && imageList.Images.ContainsKey("kampanya"))
+                {
+                    tabKampanya.ImageKey = "kampanya";
+                }
+            }
+            catch { /* İkonlar yüklenemezse sekmeler ikonsuz görünmeye devam eder */ }
         }
 
     }

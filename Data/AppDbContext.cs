@@ -17,7 +17,21 @@ namespace AcentemOto.Data
         {
             // Veritabanını uygulamanın çalıştığı klasörde oluşturur
             string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "messages.db");
-            optionsBuilder.UseSqlite($"Data Source={dbPath};Cache=Shared;Mode=ReadWriteCreate;");
+            
+            // SQLite aynı anda birden fazla iş parcacağının veri tabanına erişimi halinde kitlenmemesi için 5 saniye bekleme süresi
+            optionsBuilder.UseSqlite($"Data Source={dbPath};Cache=Shared;Mode=ReadWriteCreate;BusyTimeout=5000;");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<MessageLog>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.PhoneNumber).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Status).HasConversion<string>();
+                entity.HasIndex(e => e.PhoneNumber);
+                entity.HasIndex(e => e.Status);
+            });
         }
     }
 }
